@@ -21,7 +21,6 @@ uiposrect(float x, float y, float width, float height)
 {
 	/* pass the lower left corner of the coordinates of this rectangle
 	   in the superview */
-fprintf(stderr, "x=%g y=%g width=%g height=%g\n", x, y, width, height);
 	return CGRectMake(
 		floor(y + height/2 - width/2),
 		floor(x + width/2 - height/2),
@@ -141,6 +140,11 @@ float bwidth, bheight;
 	}
 }
 
+- (void)setmainview:(id)newmv
+{
+	parent = newmv;
+}
+
 - (void)dealloc
 {
 int i;
@@ -177,11 +181,6 @@ int i;
 	[ keys[11] setText: @"OK" ];
 }
 
-- (void)setmainview:(id)newmv
-{
-	parent = newmv;
-}
-
 - (void)keypress:(int)keyid
 {
 	if (keyid < 5) {
@@ -193,6 +192,48 @@ int i;
 	} else {
 		[ parent ok_pressed ];
 	}
+}
+@end
+
+@implementation Alpha1KeyboardView
+const char *alpha1_keys = "GHJKLMNPQRSTUVWXYZ";
+- (void)create
+{
+int i;
+
+	rows = 3;
+	columns = 6;
+	[ self create_keys ];
+
+	for (i = 0; i < 18; i++) {
+		[ keys[i] setText: [ NSString stringWithFormat:@"%c", alpha1_keys[i] ] ];
+	}
+}
+
+- (void)keypress:(int)keyid
+{
+	[ parent letter_pressed: alpha1_keys[keyid] ];
+}
+@end
+
+@implementation Alpha2KeyboardView
+const char *alpha2_keys = "ABCDEF";
+- (void)create
+{
+int i;
+
+	rows = 2;
+	columns = 3;
+	[ self create_keys ];
+
+	for (i = 0; i < 6; i++) {
+		[ keys[i] setText: [ NSString stringWithFormat:@"%c", alpha2_keys[i] ] ];
+	}
+}
+
+- (void)keypress:(int)keyid
+{
+	[ parent letter_pressed: alpha1_keys[keyid] ];
 }
 @end
 
@@ -223,6 +264,8 @@ int i;
 - (id)initWithFrame:(CGRect)rect {
 	CGRect mgrs1_textrect, mgrs2_textrect, latlon_rect;
 
+	input_mode = 0;
+
 	self = [ super initWithFrame: rect ];
 	if (nil != self) {
 		GZDSI[0] = 0;
@@ -232,8 +275,8 @@ int i;
 		background_view = [ [ UIImageView alloc ] initWithImage: bgimage ];
 		[ self addSubview: background_view ];
 
-		mgrs1_textrect = uiposrect(20, 220, 200, 60);
-		mgrs2_textrect = uiposrect(270, 220, 200, 60);
+		mgrs1_textrect = uiposrect(20, 240, 200, 60);
+		mgrs2_textrect = uiposrect(270, 240, 200, 60);
 		latlon_rect = uiposrect(50, 70, 400, 60);
 
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
@@ -255,6 +298,16 @@ int i;
 		[ knumeric setHidden: NO ];
 		[ knumeric create ];
 		[ knumeric setmainview: self ];
+
+		kalpha1 = [ [ Alpha1KeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 192, 480) ];
+		[ kalpha1 setHidden: NO ];
+		[ kalpha1 create ];
+		[ kalpha1 setmainview: self ];
+
+		kalpha2 = [ [ Alpha2KeyboardView alloc ] initWithFrame: CGRectMake(192, 240, 128, 240) ];
+		[ kalpha2 setHidden: NO ];
+		[ kalpha2 create ];
+		[ kalpha2 setmainview: self ];
 	}
 
 	return self;
@@ -308,12 +361,37 @@ int i;
 	}
 }
 
+- (void)invoke_left
+{
+	[ self set_eastnorth: "" ];
+	[ self set_GZD_SI: "" ];
+
+	if (input_mode != 'l') {
+		if (input_mode == 'a') {
+			[ kalpha1 removeFromSuperview ];
+			[ kalpha2 removeFromSuperview ];
+		}
+		if (input_mode != 'r') {
+			[ self addSubview: knumeric ];
+		}
+		input_mode = 'l';
+	}
+}
+
 - (void)invoke_right
 {
-	input_mode = 'r';
 	[ self set_eastnorth: "" ];
 
-	[ self addSubview: knumeric ];
+	if (input_mode != 'r') {
+		if (input_mode == 'a') {
+			[ kalpha1 removeFromSuperview ];
+			[ kalpha2 removeFromSuperview ];
+		}
+		if (input_mode != 'l') {
+			[ self addSubview: knumeric ];
+		}
+		input_mode = 'r';
+	}
 }
 
 - (void)digit_pressed:(int)digit
@@ -323,6 +401,13 @@ char buf[20];
 	if (input_mode == 'l') {
 		sprintf(buf, "%s%d", GZDSI, digit);
 		[ self set_GZD_SI: buf ];
+
+		if (strlen(buf) == 2) {
+			[ knumeric removeFromSuperview ];
+			input_mode = 'a';
+			[ self addSubview: kalpha1 ];
+			[ self addSubview: kalpha2 ];
+		}
 	} else {
 		sprintf(buf, "%s%d", eastnorth, digit);
 		[ self set_eastnorth: buf ];
@@ -330,6 +415,18 @@ char buf[20];
 		if (strlen(buf) == 10) {
 			[ self ok_pressed ];
 		}
+	}
+}
+
+- (void)letter_pressed:(char)l
+{
+char buf[20];
+
+	sprintf(buf, "%s%c", GZDSI, l);
+	[ self set_GZD_SI: buf ];
+
+	if (strlen(buf) == 5) {
+		[ self invoke_right ];
 	}
 }
 
@@ -354,12 +451,9 @@ char buf[20];
 
 - (void)ok_pressed
 {
+	input_mode = 0;
 	[ knumeric removeFromSuperview ];
 	[ self convert ];
-}
-
-- (void)invoke_left
-{
 }
 
 - (void)dealloc

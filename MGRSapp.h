@@ -43,18 +43,32 @@
 	int rows;
 	int columns;
 	KeyView **keys;
+	NSObject *parent;
 }
 - (id)initWithFrame:(CGRect)frame;
+- (void)setmainview:(id)newmv;
 - (void)create_keys;
 - (void)dealloc;
 @end
 
-@interface NumericKeyboardView: KeyboardView
+@interface Alpha1KeyboardView: KeyboardView
 {
-	NSObject *parent;
 }
 - (void)create;
-- (void)setmainview:(id)newmv;
+- (void)keypress:(int)keyid;
+@end
+
+@interface Alpha2KeyboardView: KeyboardView
+{
+}
+- (void)create;
+- (void)keypress:(int)keyid;
+@end
+
+@interface NumericKeyboardView: KeyboardView
+{
+}
+- (void)create;
 - (void)keypress:(int)keyid;
 @end
 
@@ -66,6 +80,8 @@
 	UIImageView *background_view;
 	UIImage *bgimage;
 	NumericKeyboardView *knumeric;
+	Alpha1KeyboardView *kalpha1;
+	Alpha2KeyboardView *kalpha2;
 	char input_mode;
 	char GZDSI[6];
 	char eastnorth[12];
@@ -77,6 +93,7 @@
 - (void)invoke_left;
 - (void)invoke_right;
 - (void)digit_pressed:(int)d;
+- (void)letter_pressed:(char)l;
 - (void)ok_pressed;
 - (void)bs_pressed;
 - (void)dealloc;
