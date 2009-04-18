@@ -21,6 +21,7 @@ uiposrect(float x, float y, float width, float height)
 {
 	/* pass the lower left corner of the coordinates of this rectangle
 	   in the superview */
+fprintf(stderr, "x=%g y=%g width=%g height=%g\n", x, y, width, height);
 	return CGRectMake(
 		floor(y + height/2 - width/2),
 		floor(x + width/2 - height/2),
@@ -47,9 +48,8 @@ uiposrect(float x, float y, float width, float height)
 	[ window setContentView: mainView ];
 	[ window orderFront: self ];
 	[ window makeKey: self ];
-	[ window _setHidden: NO ];
-	//[ mainView setHidden: NO ];
 
+	[ mainView setHidden: NO ];
 	[ mainView set_GZD_SI: "18TXQ" ];
 	[ mainView set_eastnorth: "5763184896" ];
 	[ mainView convert ];
@@ -58,7 +58,6 @@ uiposrect(float x, float y, float width, float height)
 @end
 
 @implementation MGRSText
-
 - (id)initWithFrame:(CGRect)rect {
 	self = [ super initWithFrame: rect ];
 	[ self setRotationBy: 90 ];
@@ -75,24 +74,146 @@ uiposrect(float x, float y, float width, float height)
 	];
 }
 
+- (void)setmainview:(id)newmv
+{
+	parent = newmv;
+}
+
 - (void)dealloc
 {
 	[ self dealloc ];
 	[ super dealloc ];
 }
-
 @end
 
 @implementation MGRSLeft
 - (void)mouseDown:(struct __GSEvent *)event {
-	[ self setText: @"left" ];
+	[ parent invoke_left ];
 	[ super mouseDown: event ];
 }
 @end
 
 @implementation MGRSRight
 - (void)mouseDown:(struct __GSEvent *)event {
-	[ self setText: @"right" ];
+	[ parent invoke_right ];
+	[ super mouseDown: event ];
+}
+@end
+
+@implementation KeyboardView
+- (id)initWithFrame:(CGRect)rect
+{
+	height = rect.size.width;
+	width = rect.size.height;
+
+	self = [ super initWithFrame: rect ];
+
+	keys = NULL;
+
+	return self;
+}
+
+- (void)create_keys
+{
+int i, j;
+KeyView *k;
+CGRect r;
+float bwidth, bheight;
+
+	keys = malloc(sizeof(*keys) * rows * columns);
+
+	bwidth = width / columns;
+	bheight = height / rows;
+
+	for (i = 0; i < rows; i++) {
+		for (j = 0; j < columns; j++) {
+			r = uiposrect(
+				j * bwidth,
+				(rows-i-1) * bheight,
+				bwidth, bheight
+			);
+			k = [ [ KeyView alloc ] initWithFrame: r ];
+			keys[i*columns + j] = k;
+			[ k setkv: self ];
+			[ k setid: i*columns + j ];
+			[ self addSubview: k ];
+		}
+	}
+}
+
+- (void)dealloc
+{
+int i;
+
+	if (keys) {
+		for (i = 0; i < (rows * columns); i++) {
+			[ keys[i] dealloc ];
+		}
+		free(keys);
+	}
+	[ self dealloc ];
+	[ super dealloc ];
+}
+@end
+
+@implementation NumericKeyboardView
+- (void)create
+{
+	rows = 2;
+	columns = 6;
+	[ self create_keys ];
+
+	[ keys[0] setText: @"0" ];
+	[ keys[1] setText: @"1" ];
+	[ keys[2] setText: @"2" ];
+	[ keys[3] setText: @"3" ];
+	[ keys[4] setText: @"4" ];
+	[ keys[5] setText: @"BS" ];
+	[ keys[6] setText: @"5" ];
+	[ keys[7] setText: @"6" ];
+	[ keys[8] setText: @"7" ];
+	[ keys[9] setText: @"8" ];
+	[ keys[10] setText: @"9" ];
+	[ keys[11] setText: @"OK" ];
+}
+
+- (void)setmainview:(id)newmv
+{
+	parent = newmv;
+}
+
+- (void)keypress:(int)keyid
+{
+	if (keyid < 5) {
+		[ parent digit_pressed: keyid ];
+	} else if (keyid == 5) {
+		[ parent bs_pressed ];
+	} else if (keyid < 11) {
+		[ parent digit_pressed: keyid-1 ];
+	} else {
+		[ parent ok_pressed ];
+	}
+}
+@end
+
+@implementation KeyView
+- (void)setText:(NSString *)t {
+	[ self setContentToHTMLString:
+		[ [
+			@"<big><big><big><big><big><big>" stringByAppendingString: t
+		] stringByAppendingString: @"</big></big></big></big></big></big>" ]
+	];
+}
+- (void)setkv:(id)newparent
+{
+	upper = newparent;
+}
+- (void)setid:(int)newkeyid
+{
+	keyid = newkeyid;
+}
+- (void)mouseDown:(struct __GSEvent *)event {
+	[ upper keypress: keyid ];
 	[ super mouseDown: event ];
 }
 @end
@@ -117,9 +238,11 @@ uiposrect(float x, float y, float width, float height)
 
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
 		[ mgrs1_textview setText: @"" ];
+		[ mgrs1_textview setmainview: self ];
 
 		mgrs2_textview = [ [ MGRSRight alloc ] initWithFrame: mgrs2_textrect ];
 		[ mgrs2_textview setText: @"" ];
+		[ mgrs2_textview setmainview: self ];
 
 		latlon_textview = [ [ MGRSText alloc ] initWithFrame: latlon_rect ];
 		[ latlon_textview setText: @"" ];
@@ -127,6 +250,11 @@ uiposrect(float x, float y, float width, float height)
 		[ self addSubview: latlon_textview ];
 		[ self addSubview: mgrs1_textview ];
 		[ self addSubview: mgrs2_textview ];
+
+		knumeric = [ [ NumericKeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 160, 480) ];
+		[ knumeric setHidden: NO ];
+		[ knumeric create ];
+		[ knumeric setmainview: self ];
 	}
 
 	return self;
@@ -178,6 +306,60 @@ uiposrect(float x, float y, float width, float height)
 			[ NSString stringWithFormat:@"lat=%g lon=%g", lat, lon ]
 		];
 	}
+}
+
+- (void)invoke_right
+{
+	input_mode = 'r';
+	[ self set_eastnorth: "" ];
+
+	[ self addSubview: knumeric ];
+}
+
+- (void)digit_pressed:(int)digit
+{
+char buf[20];
+
+	if (input_mode == 'l') {
+		sprintf(buf, "%s%d", GZDSI, digit);
+		[ self set_GZD_SI: buf ];
+	} else {
+		sprintf(buf, "%s%d", eastnorth, digit);
+		[ self set_eastnorth: buf ];
+
+		if (strlen(buf) == 10) {
+			[ self ok_pressed ];
+		}
+	}
+}
+
+- (void)bs_pressed
+{
+char buf[20];
+
+	if (input_mode == 'l') {
+		strcpy(buf, GZDSI);
+	} else {
+		strcpy(buf, eastnorth);
+	}
+	if (buf[0]) {
+		buf[strlen(buf)-1] = 0;
+		if (input_mode == 'l') {
+			[ self set_GZD_SI: buf ];
+		} else {
+			[ self set_eastnorth: buf ];
+		}
+	}
+}
+
+- (void)ok_pressed
+{
+	[ knumeric removeFromSuperview ];
+	[ self convert ];
+}
+
+- (void)invoke_left
+{
 }
 
 - (void)dealloc
