@@ -2,7 +2,8 @@
 #import <string.h>
 #import "MGRSapp.h"
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
 FILE *fp = fopen("/tmp/washere", "w");
 dup2(fileno(fp), 2);
@@ -13,6 +14,18 @@ dup2(fileno(fp), 2);
 	int returnCode = UIApplicationMain(argc, argv, @"MGRSapp", @"MGRSapp");
 	[ autoreleasePool release ];
 	return returnCode;
+}
+
+static CGRect
+uiposrect(float x, float y, float width, float height)
+{
+	/* pass the lower left corner of the coordinates of this rectangle
+	   in the superview */
+	return CGRectMake(
+		floor(y + height/2 - width/2),
+		floor(x + width/2 - height/2),
+		width, height
+	);
 }
 
 @implementation MGRSapp
@@ -98,9 +111,9 @@ dup2(fileno(fp), 2);
 		background_view = [ [ UIImageView alloc ] initWithImage: bgimage ];
 		[ self addSubview: background_view ];
 
-		mgrs1_textrect = CGRectMake(150, 100/*x*/, 200/*width*/, 60);
-		mgrs2_textrect = CGRectMake(150, 350, 200, 60);
-		latlon_rect = CGRectMake(-80, 200, 400, 60);
+		mgrs1_textrect = uiposrect(20, 220, 200, 60);
+		mgrs2_textrect = uiposrect(270, 220, 200, 60);
+		latlon_rect = uiposrect(50, 70, 400, 60);
 
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
 		[ mgrs1_textview setText: @"" ];
