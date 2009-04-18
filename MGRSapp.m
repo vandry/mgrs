@@ -1,6 +1,7 @@
 #import <math.h>
 #import <string.h>
 #import "MGRSapp.h"
+#include "mgrslib/mgrs.h"
 
 int
 main(int argc, char **argv)
@@ -68,8 +69,8 @@ uiposrect(float x, float y, float width, float height)
 - (void)setText:(NSString *)t {
 	[ self setContentToHTMLString:
 		[ [
-			@"<big><big><big><big>" stringByAppendingString: t
-		] stringByAppendingString: @"</big></big></big></big>" ]
+			@"<center><big><big><big><big>" stringByAppendingString: t
+		] stringByAppendingString: @"</big></big></big></big></center>" ]
 	];
 }
 
@@ -241,8 +242,9 @@ int i;
 - (void)setText:(NSString *)t {
 	[ self setContentToHTMLString:
 		[ [
-			@"<big><big><big><big><big><big>" stringByAppendingString: t
-		] stringByAppendingString: @"</big></big></big></big></big></big>" ]
+			@"<center><big><big><big><big><big><big>"
+			stringByAppendingString: t
+		] stringByAppendingString: @"</big></big></big></big></big></big></center>" ]
 	];
 }
 - (void)setkv:(id)newparent
@@ -277,7 +279,7 @@ int i;
 
 		mgrs1_textrect = uiposrect(20, 240, 200, 60);
 		mgrs2_textrect = uiposrect(270, 240, 200, 60);
-		latlon_rect = uiposrect(50, 70, 400, 60);
+		latlon_rect = uiposrect(70, 60, 350, 100);
 
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
 		[ mgrs1_textview setText: @"" ];
@@ -324,9 +326,11 @@ int i;
 }
 
 - (void)convert {
-	char buf[20];
-	char *sample_mgrs = "18TXQ5763184896";
-	double lat, lon;
+char buf[20];
+NSString *degree;
+char *sample_mgrs = "18TXQ5763184896";
+double lat, lon;
+long frlat, frlon;
 
 	if (
 		(strlen(GZDSI) != 5) ||
@@ -351,12 +355,49 @@ int i;
 	long result = Convert_MGRS_To_Geodetic(buf, &lat, &lon);
 
 	if (result) {
-		[ latlon_textview setText: @"MGRS conversion error" ];
+		if (result & MGRS_LAT_ERROR) {
+			[ latlon_textview setText: @"Latitude outside of valid range" ];
+		} else if (result & MGRS_LON_ERROR) {
+			[ latlon_textview setText: @"Longitude outside of valid range" ];
+		} else if (result & MGRS_STRING_ERROR) {
+			[ latlon_textview setText: @"MGRS string format error" ];
+		} else if (result & MGRS_PRECISION_ERROR) {
+			[ latlon_textview setText: @"MGRS precision error" ];
+		} else if (result & MGRS_A_ERROR) {
+			[ latlon_textview setText: @"Semi-major axis <= 0" ];
+		} else if (result & MGRS_INV_F_ERROR) {
+			[ latlon_textview setText: @"Inverse flattening outside range" ];
+		} else if (result & MGRS_EASTING_ERROR) {
+			[ latlon_textview setText: @"Easting outside range" ];
+		} else if (result & MGRS_NORTHING_ERROR) {
+			[ latlon_textview setText: @"Northing outside range" ];
+		} else if (result & MGRS_ZONE_ERROR) {
+			[ latlon_textview setText: @"Zone outside range" ];
+		} else if (result & MGRS_HEMISPHERE_ERROR) {
+			[ latlon_textview setText: @"Invalid hemisphere" ];
+		} else {
+			[ latlon_textview setText: @"Unknown MGRS conversion error" ];
+		}
 	} else {
 		lat = lat / M_PI * 180.0;
 		lon = lon / M_PI * 180.0;
+		frlat = (long)(rint(lat * 3600000.0));
+		frlon = (long)(rint(lon * 3600000.0));
+		
 		[ latlon_textview setText:
-			[ NSString stringWithFormat:@"lat=%g lon=%g", lat, lon ]
+			[ NSString
+				stringWithFormat:@"%d&#176; %d\' %g\'\' %c<br />%d&#176; %d\' %g\'\' %c",
+
+				abs(frlat / 3600000),
+				abs(frlat / 60000) % 60,
+				((double)(abs(frlat) % 60000)) / 1000.0,
+				(lat > 0) ? 'N' : 'S',
+
+				abs(frlon / 3600000),
+				abs(frlon / 60000) % 60,
+				((double)(abs(frlon) % 60000)) / 1000.0,
+				(lon > 0) ? 'E' : 'W'
+			]
 		];
 	}
 }
