@@ -1,7 +1,8 @@
 SDK=/opt/iphonedev
-CC=$(SDK)/bin/arm-apple-darwin9-gcc
+BINPREF=/bin/arm-apple-darwin9-
+CC=$(SDK)$(BINPREF)gcc
 LD=$(CC)
-AR=$(SDK)/bin/arm-apple-darwin9-ar
+AR=$(SDK)$(BINPREF)ar
 LDFLAGS=-Lmgrslib -lobjc \
 	-framework CoreFoundation \
 	-framework Foundation \
@@ -14,7 +15,10 @@ CFLAGS=-march=armv6 -mcpu=arm1176jzf-s -g
 
 OBJ=MGRSapp.o
 
-all: MGRS
+all: MGRS.app/MGRS
+
+MGRS.app/MGRS: MGRS
+	CODESIGN_ALLOCATE=$(SDK)$(BINPREF)codesign_allocate ldid -S MGRS && cp MGRS MGRS.app
 
 MGRS: $(OBJ) mgrslib/libmgrs.a
 	$(LD) $(LDFLAGS) -o $@ $(OBJ) -lmgrs
