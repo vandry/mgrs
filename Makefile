@@ -20,13 +20,16 @@ INSTALL_EXEC=MGRS.app/MGRS
 
 OBJ=MGRSapp.o
 
-all: MGRS.app/MGRS
+all: MGRS.app/MGRS MGRS.app/bg_normal.png
 
 package:
 	DPKG_DATADIR=`pwd`/dpkg.d dpkg-buildpackage -us -uc -rfakeroot -aiphoneos-arm -tiphoneos-arm
 
 MGRS.app/MGRS: MGRS
 	CODESIGN_ALLOCATE=$(SDK)$(BINPREF)codesign_allocate ldid -S MGRS && cp MGRS MGRS.app
+
+MGRS.app/bg_normal.png: bg_normal.svg
+	rsvg bg_normal.svg $@
 
 MGRS: $(OBJ) mgrslib/libmgrs.a
 	$(LD) $(LDFLAGS) -o $@ $(OBJ) -lmgrs
@@ -43,7 +46,7 @@ mgrslib/libmgrs.a:
 	$(MAKE) -C mgrslib CC="$(CC)" LD="$(LD)" AR="$(AR)" CFLAGS="$(CFLAGS)"
 
 clean:
-	rm -f $(OBJ) MGRS MGRS.app/MGRS
+	rm -f $(OBJ) MGRS MGRS.app/MGRS MGRS.app/bg_normal.png
 	$(MAKE) -C mgrslib clean
 
 MGRSapp.o: MGRSapp.m MGRSapp.h

@@ -17,6 +17,6 @@
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>UIInterfaceOrientation</key>
-	<string>UIInterfaceOrientationLandscapeLeft</string>
+	<string>UIInterfaceOrientationLandscapeRight</string>
 </dict>
 </plist>

@@ -62,6 +62,8 @@ uiposrect(float x, float y, float width, float height)
 	self = [ super initWithFrame: rect ];
 	[ self setRotationBy: 90 ];
 	[ self setEditable: NO ];
+	UIColor *background = [ UIColor clearColor ];
+	self.backgroundColor = background;
 
 	return self;
 }
@@ -279,7 +281,7 @@ int i;
 
 		mgrs1_textrect = uiposrect(20, 240, 200, 60);
 		mgrs2_textrect = uiposrect(270, 240, 200, 60);
-		latlon_rect = uiposrect(70, 60, 350, 100);
+		latlon_rect = uiposrect(70, 70, 350, 90);
 
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
 		[ mgrs1_textview setText: @"" ];
@@ -386,7 +388,12 @@ long frlat, frlon;
 		
 		[ latlon_textview setText:
 			[ NSString
-				stringWithFormat:@"%d&#176; %d\' %g\'\' %c<br />%d&#176; %d\' %g\'\' %c",
+//				stringWithFormat:@"%d&#176; %d\' %g\'\' %c<br />%d&#176; %d\' %g\'\' %c",
+				stringWithFormat:@
+					"<table width=\"100%\" border=\"0\"><tr><td>%d&#176;</td>"
+					"<td>%d\'</td><td>%g\'\'</td><td>%c</td></tr>"
+					"<tr><td>%d&#176;</td><td>%d\'</td>"
+					"<td>%g\'\'</td><td>%c</td></tr></table>",
 
 				abs(frlat / 3600000),
 				abs(frlat / 60000) % 60,
