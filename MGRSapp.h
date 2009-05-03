@@ -34,6 +34,24 @@
 - (void)setkv:(id)newparent;
 - (void)setid:(int)newkeyid;
 - (void)mouseDown:(struct __GSEvent *)event;
+- (void)mouseUp:(struct __GSEvent *)event;
+@end
+
+@interface KeyOverlay : NSObject
+{
+	int rows;
+	int columns;
+	float width;
+	float height;
+	UIImage *master;
+	UIImageView **images;
+	UIImageView **views;
+	UIView **uiviews;
+}
+- (void)set_rows:(int)rows;
+- (void)set_columns:(int)columns;
+- (void)set_master:(NSString *)imagename;
+- (UIView *)get_overlay:(int)keyid;
 @end
 
 @interface KeyboardView : UIView
@@ -43,10 +61,23 @@
 	int rows;
 	int columns;
 	KeyView **keys;
+	KeyOverlay *disabled;
+	KeyOverlay *pressed;
 	NSObject *parent;
+	UIImage *normal_master;
+	UIImageView *imageview;
 }
 - (id)initWithFrame:(CGRect)frame;
 - (void)setmainview:(id)newmv;
+- (void)set_image:(NSString *)imagename;
+- (void)set_disabled_image:(NSString *)imagename;
+- (void)set_pressed_image:(NSString *)imagename;
+- (void)disable_key:(int)keyid;
+- (void)enable_key:(int)keyid;
+- (void)depress_key:(int)keyid;
+- (void)unpress_key:(int)keyid;
+- (void)mouseDown:(struct __GSEvent *)event;
+- (void)mouseUp:(struct __GSEvent *)event;
 - (void)create_keys;
 - (void)dealloc;
 @end

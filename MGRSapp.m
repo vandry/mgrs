@@ -102,6 +102,70 @@ uiposrect(float x, float y, float width, float height)
 }
 @end
 
+@implementation KeyOverlay
+- (void)set_rows:(int)newrows
+{
+	rows = newrows;
+}
+
+- (void)set_columns:(int)newcols
+{
+	columns = newcols;
+}
+
+- (void)set_master:(NSString *)imagename
+{
+int nkeys = rows * columns;
+int i;
+
+	master = [ UIImage applicationImageNamed: imagename ];
+
+	height = master.size.width;
+	width = master.size.height;
+
+	images = malloc(sizeof(*images) * nkeys);
+	views = malloc(sizeof(*views) * nkeys);
+	uiviews = malloc(sizeof(*uiviews) * nkeys);
+	for (i = 0; i < nkeys; i++) {
+		images[i] = NULL;
+	}
+}
+
+- (UIView *)get_overlay:(int)keyid
+{
+int row, col;
+float bwidth, bheight;
+
+	bwidth = width / columns;
+	bheight = height / rows;
+
+	row = keyid / columns;
+	col = keyid % columns;
+
+	if (!(images[keyid])) {
+		/* first reference, create the image */
+		float x = (rows - row - 1) * bheight;
+		float y = col * bwidth;
+
+		CGImageRef newcgim = CGImageCreateWithImageInRect(
+			[ master imageRef ],
+			CGRectMake(x, y, bheight, bwidth)
+		);
+		images[keyid] = [ UIImage imageWithCGImage:newcgim ];
+		views[keyid] = [ [ UIImageView alloc ] initWithImage:
+			images[keyid]
+		];
+		uiviews[keyid] = [
+			[ UIView alloc ]
+			initWithFrame: CGRectMake(x, y, bheight, bwidth)
+		];
+		[ uiviews[keyid] addSubview: views[keyid] ];
+	}
+
+	return uiviews[keyid];
+}
+@end
+
 @implementation KeyboardView
 - (id)initWithFrame:(CGRect)rect
 {
@@ -113,6 +177,61 @@ uiposrect(float x, float y, float width, float height)
 	keys = NULL;
 
 	return self;
+}
+
+- (void)set_image:(NSString *)imagename
+{
+	normal_master = [ UIImage applicationImageNamed: imagename ];
+	imageview = [ [ UIImageView alloc ] initWithImage: normal_master ];
+	[ self addSubview: imageview ];
+}
+
+- (void)set_disabled_image:(NSString *)imagename
+{
+	disabled = [ KeyOverlay alloc ];
+	[ disabled set_rows: rows ];
+	[ disabled set_columns: columns ];
+	[ disabled set_master: imagename ];
+}
+
+- (void)disable_key:(int)keyid
+{
+	[ self addSubview: [ disabled get_overlay: keyid ] ];
+}
+
+- (void)enable_key:(int)keyid
+{
+	[ [ disabled get_overlay: keyid ] removeFromSuperview ];
+}
+
+- (void)set_pressed_image:(NSString *)imagename
+{
+	pressed = [ KeyOverlay alloc ];
+	[ pressed set_rows: rows ];
+	[ pressed set_columns: columns ];
+	[ pressed set_master: imagename ];
+}
+
+- (void)depress_key:(int)keyid
+{
+	[ self addSubview: [ pressed get_overlay: keyid ] ];
+}
+
+- (void)unpress_key:(int)keyid
+{
+	[ [ pressed get_overlay: keyid ] removeFromSuperview ];
+}
+
+- (void)mouseDown:(struct __GSEvent *)event {
+fprintf(stderr, "kv down x=%g y=%g\n", GSEventGetDeltaX(event), GSEventGetDeltaY(event));
+fflush(stderr);
+	[ super mouseDown: event ];
+}
+
+- (void)mouseUp:(struct __GSEvent *)event {
+fprintf(stderr, "kv up x=%g y=%g\n", GSEventGetDeltaX(event), GSEventGetDeltaY(event));
+fflush(stderr);
+	[ super mouseDown: event ];
 }
 
 - (void)create_keys
@@ -169,19 +288,6 @@ int i;
 	rows = 2;
 	columns = 6;
 	[ self create_keys ];
-
-	[ keys[0] setText: @"0" ];
-	[ keys[1] setText: @"1" ];
-	[ keys[2] setText: @"2" ];
-	[ keys[3] setText: @"3" ];
-	[ keys[4] setText: @"4" ];
-	[ keys[5] setText: @"BS" ];
-	[ keys[6] setText: @"5" ];
-	[ keys[7] setText: @"6" ];
-	[ keys[8] setText: @"7" ];
-	[ keys[9] setText: @"8" ];
-	[ keys[10] setText: @"9" ];
-	[ keys[11] setText: @"OK" ];
 }
 
 - (void)keypress:(int)keyid
@@ -258,6 +364,13 @@ int i;
 	keyid = newkeyid;
 }
 - (void)mouseDown:(struct __GSEvent *)event {
+fprintf(stderr, "down %d\n", keyid);
+	[ upper depress_key: keyid ];
+	[ super mouseDown: event ];
+}
+- (void)mouseUp:(struct __GSEvent *)event {
+fprintf(stderr, "up %d\n", keyid);
+	[ upper unpress_key: keyid ];
 	[ upper keypress: keyid ];
 	[ super mouseDown: event ];
 }
@@ -299,8 +412,11 @@ int i;
 		[ self addSubview: mgrs2_textview ];
 
 		knumeric = [ [ NumericKeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 160, 480) ];
+		[ knumeric set_image: @"numeric_keyboard_normal.png" ];
 		[ knumeric setHidden: NO ];
 		[ knumeric create ];
+		[ knumeric set_disabled_image: @"numeric_keyboard_disabled.png" ];
+		[ knumeric set_pressed_image: @"numeric_keyboard_pressed.png" ];
 		[ knumeric setmainview: self ];
 
 		kalpha1 = [ [ Alpha1KeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 192, 480) ];
