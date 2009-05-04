@@ -1,5 +1,8 @@
 #import <math.h>
 #import <string.h>
+#import <UIKit/UIKit.h>
+#import <UIKit/UIApplication.h>
+#import <GraphicsServices/GraphicsServices.h>
 #import "MGRSapp.h"
 #include "mgrslib/mgrs.h"
 
@@ -155,10 +158,10 @@ float bwidth, bheight;
 		views[keyid] = [ [ UIImageView alloc ] initWithImage:
 			images[keyid]
 		];
-		uiviews[keyid] = [
+		uiviews[keyid] = [ [
 			[ UIView alloc ]
 			initWithFrame: CGRectMake(x, y, bheight, bwidth)
-		];
+		] retain ];
 		[ uiviews[keyid] addSubview: views[keyid] ];
 	}
 
@@ -174,7 +177,7 @@ float bwidth, bheight;
 
 	self = [ super initWithFrame: rect ];
 
-	keys = NULL;
+	down_keyid = -1;
 
 	return self;
 }
@@ -188,20 +191,31 @@ float bwidth, bheight;
 
 - (void)set_disabled_image:(NSString *)imagename
 {
+int nkeys = rows * columns;
+int i;
+
 	disabled = [ KeyOverlay alloc ];
+	disabled_flags = malloc(nkeys * sizeof(*disabled_flags));
 	[ disabled set_rows: rows ];
 	[ disabled set_columns: columns ];
 	[ disabled set_master: imagename ];
+	for (i = 0; i < nkeys; i++) disabled_flags[i] = 0;
 }
 
 - (void)disable_key:(int)keyid
 {
-	[ self addSubview: [ disabled get_overlay: keyid ] ];
+	if (!(disabled_flags[keyid])) {
+		[ self addSubview: [ disabled get_overlay: keyid ] ];
+		disabled_flags[keyid] = 1;
+	}
 }
 
 - (void)enable_key:(int)keyid
 {
-	[ [ disabled get_overlay: keyid ] removeFromSuperview ];
+	if (disabled_flags[keyid]) {
+		[ [ disabled get_overlay: keyid ] removeFromSuperview ];
+		disabled_flags[keyid] = 0;
+	}
 }
 
 - (void)set_pressed_image:(NSString *)imagename
@@ -222,44 +236,55 @@ float bwidth, bheight;
 	[ [ pressed get_overlay: keyid ] removeFromSuperview ];
 }
 
-- (void)mouseDown:(struct __GSEvent *)event {
-fprintf(stderr, "kv down x=%g y=%g\n", GSEventGetDeltaX(event), GSEventGetDeltaY(event));
-fflush(stderr);
-	[ super mouseDown: event ];
-}
-
-- (void)mouseUp:(struct __GSEvent *)event {
-fprintf(stderr, "kv up x=%g y=%g\n", GSEventGetDeltaX(event), GSEventGetDeltaY(event));
-fflush(stderr);
-	[ super mouseDown: event ];
-}
-
-- (void)create_keys
-{
-int i, j;
-KeyView *k;
-CGRect r;
+- (int)keyid_from_event:(struct __GSEvent *)event {
+CGPoint loc;
 float bwidth, bheight;
-
-	keys = malloc(sizeof(*keys) * rows * columns);
+int row, column;
 
 	bwidth = width / columns;
 	bheight = height / rows;
 
-	for (i = 0; i < rows; i++) {
-		for (j = 0; j < columns; j++) {
-			r = uiposrect(
-				j * bwidth,
-				(rows-i-1) * bheight,
-				bwidth, bheight
-			);
-			k = [ [ KeyView alloc ] initWithFrame: r ];
-			keys[i*columns + j] = k;
-			[ k setkv: self ];
-			[ k setid: i*columns + j ];
-			[ self addSubview: k ];
+	loc = GSEventGetLocationInWindow(event);
+
+	column = loc.y / bwidth;
+	row = rows - ((int)(loc.x / bheight)) - 1;
+
+	return row * columns + column;
+}
+
+- (void)mouseDown:(struct __GSEvent *)event
+{
+int keyid;
+
+	keyid = [ self keyid_from_event: event ];
+	if (
+		(!disabled) ||	/* if either disabling is not active */
+		(!(disabled_flags[keyid]))	/* or this key is not disabled */
+	) {
+		/* then proceed */
+		if (down_keyid >= 0) {
+			[ self unpress_key: down_keyid ];
 		}
+		down_keyid = keyid;
+		[ self depress_key: down_keyid ];
 	}
+	[ super mouseDown: event ];
+}
+
+- (void)mouseUp:(struct __GSEvent *)event
+{
+int keyid;
+
+	keyid = [ self keyid_from_event: event ];
+	if (down_keyid >= 0) {
+		[ self unpress_key: down_keyid ];
+		if (down_keyid == keyid) {
+			/* only react if we "up" on the same key as we "down"ed */
+			[ self keypress: keyid ];
+		}
+		down_keyid = -1;
+	}
+	[ super mouseDown: event ];
 }
 
 - (void)setmainview:(id)newmv
@@ -271,11 +296,12 @@ float bwidth, bheight;
 {
 int i;
 
-	if (keys) {
-		for (i = 0; i < (rows * columns); i++) {
-			[ keys[i] dealloc ];
-		}
-		free(keys);
+	if (disabled) {
+		free(disabled_flags);
+		[ disabled dealloc ];
+	}
+	if (pressed) {
+		[ pressed dealloc ];
 	}
 	[ self dealloc ];
 	[ super dealloc ];
@@ -287,7 +313,6 @@ int i;
 {
 	rows = 2;
 	columns = 6;
-	[ self create_keys ];
 }
 
 - (void)keypress:(int)keyid
@@ -312,11 +337,6 @@ int i;
 
 	rows = 3;
 	columns = 6;
-	[ self create_keys ];
-
-	for (i = 0; i < 18; i++) {
-		[ keys[i] setText: [ NSString stringWithFormat:@"%c", alpha1_keys[i] ] ];
-	}
 }
 
 - (void)keypress:(int)keyid
@@ -333,11 +353,6 @@ int i;
 
 	rows = 2;
 	columns = 3;
-	[ self create_keys ];
-
-	for (i = 0; i < 6; i++) {
-		[ keys[i] setText: [ NSString stringWithFormat:@"%c", alpha2_keys[i] ] ];
-	}
 }
 
 - (void)keypress:(int)keyid
@@ -420,13 +435,19 @@ fprintf(stderr, "up %d\n", keyid);
 		[ knumeric setmainview: self ];
 
 		kalpha1 = [ [ Alpha1KeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 192, 480) ];
+		[ kalpha1 set_image: @"alpha1_keyboard_normal.png" ];
 		[ kalpha1 setHidden: NO ];
 		[ kalpha1 create ];
+		[ kalpha1 set_disabled_image: @"alpha1_keyboard_disabled.png" ];
+		[ kalpha1 set_pressed_image: @"alpha1_keyboard_pressed.png" ];
 		[ kalpha1 setmainview: self ];
 
 		kalpha2 = [ [ Alpha2KeyboardView alloc ] initWithFrame: CGRectMake(192, 240, 128, 240) ];
+		[ kalpha2 set_image: @"alpha2_keyboard_normal.png" ];
 		[ kalpha2 setHidden: NO ];
 		[ kalpha2 create ];
+		[ kalpha2 set_disabled_image: @"alpha2_keyboard_disabled.png" ];
+		[ kalpha2 set_pressed_image: @"alpha2_keyboard_pressed.png" ];
 		[ kalpha2 setmainview: self ];
 	}
 

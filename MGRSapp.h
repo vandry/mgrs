@@ -60,7 +60,8 @@
 	float height;
 	int rows;
 	int columns;
-	KeyView **keys;
+	int down_keyid;
+	unsigned char *disabled_flags;
 	KeyOverlay *disabled;
 	KeyOverlay *pressed;
 	NSObject *parent;
@@ -76,9 +77,9 @@
 - (void)enable_key:(int)keyid;
 - (void)depress_key:(int)keyid;
 - (void)unpress_key:(int)keyid;
+- (int)keyid_from_event:(struct __GSEvent *)event;
 - (void)mouseDown:(struct __GSEvent *)event;
 - (void)mouseUp:(struct __GSEvent *)event;
-- (void)create_keys;
 - (void)dealloc;
 @end
 

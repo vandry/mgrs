@@ -23,6 +23,12 @@ INSTALL_EXEC=MGRS.app/MGRS
 GENERATED_GRAPHICS=MGRS.app/bg_normal.png MGRS.app/numeric_keyboard_normal.png \
 	MGRS.app/numeric_keyboard_disabled.png \
 	MGRS.app/numeric_keyboard_pressed.png \
+	MGRS.app/alpha1_keyboard_normal.png \
+	MGRS.app/alpha1_keyboard_disabled.png \
+	MGRS.app/alpha1_keyboard_pressed.png \
+	MGRS.app/alpha2_keyboard_normal.png \
+	MGRS.app/alpha2_keyboard_disabled.png \
+	MGRS.app/alpha2_keyboard_pressed.png
 
 OBJ=MGRSapp.o
 
