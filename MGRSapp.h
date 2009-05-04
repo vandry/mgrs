@@ -25,18 +25,6 @@
 - (void)mouseDown:(struct __GSEvent *)event;
 @end
 
-@interface KeyView : MGRSText
-{
-	int keyid;
-	NSObject *upper;
-}
-- (void)setText:(NSString *)t;
-- (void)setkv:(id)newparent;
-- (void)setid:(int)newkeyid;
-- (void)mouseDown:(struct __GSEvent *)event;
-- (void)mouseUp:(struct __GSEvent *)event;
-@end
-
 @interface KeyOverlay : NSObject
 {
 	int rows;
@@ -80,6 +68,7 @@
 - (int)keyid_from_event:(struct __GSEvent *)event;
 - (void)mouseDown:(struct __GSEvent *)event;
 - (void)mouseUp:(struct __GSEvent *)event;
+- (void)disappear;
 - (void)dealloc;
 @end
 
@@ -106,9 +95,9 @@
 
 @interface MainView : UIView
 {
-	UITextView *mgrs1_textview;
-	UITextView *mgrs2_textview;
-	UITextView *latlon_textview;
+	MGRSText *mgrs1_textview;
+	MGRSText *mgrs2_textview;
+	MGRSText *latlon_textview;
 	UIImageView *background_view;
 	UIImage *bgimage;
 	NumericKeyboardView *knumeric;

@@ -1,7 +1,11 @@
 #import <math.h>
 #import <string.h>
 #import <UIKit/UIKit.h>
+#import <UIKit/UIImage.h>
+#import <UIKit/UIImageView.h>
+#import <UIKit/UITextView.h>
 #import <UIKit/UIApplication.h>
+#import <UIKit/UIView.h>
 #import <GraphicsServices/GraphicsServices.h>
 #import "MGRSapp.h"
 #include "mgrslib/mgrs.h"
@@ -292,6 +296,25 @@ int keyid;
 	parent = newmv;
 }
 
+- (void)disappear
+{
+int nkeys = rows * columns;
+int i;
+
+	if (disabled) {
+		for (i = 0; i < nkeys; i++) {
+			if (disabled_flags[i]) {
+				[ self enable_key: i ];
+			}
+		}
+	}
+	if (down_keyid >= 0) {
+		[ self unpress_key: down_keyid ];
+		down_keyid = -1;
+	}
+	[ self removeFromSuperview ];
+}
+
 - (void)dealloc
 {
 int i;
@@ -361,36 +384,6 @@ int i;
 }
 @end
 
-@implementation KeyView
-- (void)setText:(NSString *)t {
-	[ self setContentToHTMLString:
-		[ [
-			@"<center><big><big><big><big><big><big>"
-			stringByAppendingString: t
-		] stringByAppendingString: @"</big></big></big></big></big></big></center>" ]
-	];
-}
-- (void)setkv:(id)newparent
-{
-	upper = newparent;
-}
-- (void)setid:(int)newkeyid
-{
-	keyid = newkeyid;
-}
-- (void)mouseDown:(struct __GSEvent *)event {
-fprintf(stderr, "down %d\n", keyid);
-	[ upper depress_key: keyid ];
-	[ super mouseDown: event ];
-}
-- (void)mouseUp:(struct __GSEvent *)event {
-fprintf(stderr, "up %d\n", keyid);
-	[ upper unpress_key: keyid ];
-	[ upper keypress: keyid ];
-	[ super mouseDown: event ];
-}
-@end
-
 @implementation MainView
 
 - (id)initWithFrame:(CGRect)rect {
@@ -407,8 +400,8 @@ fprintf(stderr, "up %d\n", keyid);
 		background_view = [ [ UIImageView alloc ] initWithImage: bgimage ];
 		[ self addSubview: background_view ];
 
-		mgrs1_textrect = uiposrect(20, 240, 200, 60);
-		mgrs2_textrect = uiposrect(270, 240, 200, 60);
+		mgrs1_textrect = uiposrect(20, 220, 200, 60);
+		mgrs2_textrect = uiposrect(270, 220, 200, 60);
 		latlon_rect = uiposrect(70, 70, 350, 90);
 
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
@@ -527,10 +520,13 @@ long frlat, frlon;
 			[ NSString
 //				stringWithFormat:@"%d&#176; %d\' %g\'\' %c<br />%d&#176; %d\' %g\'\' %c",
 				stringWithFormat:@
-					"<table width=\"100%\" border=\"0\"><tr><td>%d&#176;</td>"
-					"<td>%d\'</td><td>%g\'\'</td><td>%c</td></tr>"
-					"<tr><td>%d&#176;</td><td>%d\'</td>"
-					"<td>%g\'\'</td><td>%c</td></tr></table>",
+					"<table cellspacing=\"5\" border=\"0\">"
+					"<tr><td align=\"right\">%d&#176;</td>"
+					"<td align=\"right\">%d\'</td>"
+					"<td align=\"right\">%g\'\'</td><td>%c</td></tr>"
+					"<tr><td align=\"right\">%d&#176;</td>"
+					"<td align=\"right\">%d\'</td>"
+					"<td align=\"right\">%g\'\'</td><td>%c</td></tr></table>",
 
 				abs(frlat / 3600000),
 				abs(frlat / 60000) % 60,
@@ -553,11 +549,12 @@ long frlat, frlon;
 
 	if (input_mode != 'l') {
 		if (input_mode == 'a') {
-			[ kalpha1 removeFromSuperview ];
-			[ kalpha2 removeFromSuperview ];
+			[ kalpha1 disappear ];
+			[ kalpha2 disappear ];
 		}
 		if (input_mode != 'r') {
 			[ self addSubview: knumeric ];
+			[ knumeric disable_key: 11 ];	/* OK key */
 		}
 		input_mode = 'l';
 	}
@@ -569,11 +566,12 @@ long frlat, frlon;
 
 	if (input_mode != 'r') {
 		if (input_mode == 'a') {
-			[ kalpha1 removeFromSuperview ];
-			[ kalpha2 removeFromSuperview ];
+			[ kalpha1 disappear ];
+			[ kalpha2 disappear ];
 		}
 		if (input_mode != 'l') {
 			[ self addSubview: knumeric ];
+			[ knumeric disable_key: 11 ];	/* OK key */
 		}
 		input_mode = 'r';
 	}
@@ -588,14 +586,26 @@ char buf[20];
 		[ self set_GZD_SI: buf ];
 
 		if (strlen(buf) == 2) {
-			[ knumeric removeFromSuperview ];
+			[ knumeric disappear ];
 			input_mode = 'a';
 			[ self addSubview: kalpha1 ];
 			[ self addSubview: kalpha2 ];
+			/* only C..X valid as grid zone designation latitude bands */
+			[ kalpha2 disable_key: 0 ];	/* A */
+			[ kalpha2 disable_key: 1 ];	/* B */
+			[ kalpha1 disable_key: 16 ];	/* Y */
+			[ kalpha1 disable_key: 17 ];	/* Z */
 		}
 	} else {
 		sprintf(buf, "%s%d", eastnorth, digit);
 		[ self set_eastnorth: buf ];
+
+		if ((strlen(buf) & 1) == 0) {
+			/* even number of digits */
+			[ knumeric enable_key: 11 ];	/* OK key */
+		} else {
+			[ knumeric disable_key: 11 ];	/* OK key */
+		}
 
 		if (strlen(buf) == 10) {
 			[ self ok_pressed ];
@@ -612,6 +622,12 @@ char buf[20];
 
 	if (strlen(buf) == 5) {
 		[ self invoke_right ];
+	} else if (strlen(buf) == 3) {
+		/* 100 000 square ID starts here. All letters valid */
+		[ kalpha2 enable_key: 0 ];	/* A */
+		[ kalpha2 enable_key: 1 ];	/* B */
+		[ kalpha1 enable_key: 16 ];	/* Y */
+		[ kalpha1 enable_key: 17 ];	/* Z */
 	}
 }
 
@@ -637,7 +653,7 @@ char buf[20];
 - (void)ok_pressed
 {
 	input_mode = 0;
-	[ knumeric removeFromSuperview ];
+	[ knumeric disappear ];
 	[ self convert ];
 }
 
