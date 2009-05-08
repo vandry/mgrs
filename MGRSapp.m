@@ -248,10 +248,12 @@ int row, column;
 	bwidth = width / columns;
 	bheight = height / rows;
 
-	loc = GSEventGetLocationInWindow(event);
+	loc = [ self convertPoint:GSEventGetLocationInWindow(event) fromView:nil ];
 
 	column = loc.y / bwidth;
 	row = rows - ((int)(loc.x / bheight)) - 1;
+
+	if (row < 0) { row = 0; column = 0; }
 
 	return row * columns + column;
 }
@@ -380,7 +382,7 @@ int i;
 
 - (void)keypress:(int)keyid
 {
-	[ parent letter_pressed: alpha1_keys[keyid] ];
+	[ parent letter_pressed: alpha2_keys[keyid] ];
 }
 @end
 
@@ -520,13 +522,15 @@ long frlat, frlon;
 			[ NSString
 //				stringWithFormat:@"%d&#176; %d\' %g\'\' %c<br />%d&#176; %d\' %g\'\' %c",
 				stringWithFormat:@
+					"<font face=\"Courier\">"
 					"<table cellspacing=\"5\" border=\"0\">"
 					"<tr><td align=\"right\">%d&#176;</td>"
 					"<td align=\"right\">%d\'</td>"
 					"<td align=\"right\">%g\'\'</td><td>%c</td></tr>"
 					"<tr><td align=\"right\">%d&#176;</td>"
 					"<td align=\"right\">%d\'</td>"
-					"<td align=\"right\">%g\'\'</td><td>%c</td></tr></table>",
+					"<td align=\"right\">%g\'\'</td><td>%c</td></tr></table>"
+					"</font>",
 
 				abs(frlat / 3600000),
 				abs(frlat / 60000) % 60,
@@ -628,6 +632,12 @@ char buf[20];
 		[ kalpha2 enable_key: 1 ];	/* B */
 		[ kalpha1 enable_key: 16 ];	/* Y */
 		[ kalpha1 enable_key: 17 ];	/* Z */
+	} else if (strlen(buf) == 4) {
+		/* second letter of 100 000 square ID. Only A..V valid */
+		[ kalpha1 disable_key: 14 ];	/* W */
+		[ kalpha1 disable_key: 15 ];	/* X */
+		[ kalpha1 disable_key: 16 ];	/* Y */
+		[ kalpha1 disable_key: 17 ];	/* Z */
 	}
 }
 
