@@ -515,12 +515,17 @@ long frlat, frlon;
 	} else {
 		lat = lat / M_PI * 180.0;
 		lon = lon / M_PI * 180.0;
+#ifdef STUPIDLY_PRECISE
 		frlat = (long)(rint(lat * 3600000.0));
 		frlon = (long)(rint(lon * 3600000.0));
+#else
+		frlat = (long)(rint(lat * 6000.0));
+		frlon = (long)(rint(lon * 6000.0));
+#endif
 		
 		[ latlon_textview setText:
 			[ NSString
-//				stringWithFormat:@"%d&#176; %d\' %g\'\' %c<br />%d&#176; %d\' %g\'\' %c",
+#ifdef STUPIDLY_PRECISE
 				stringWithFormat:@
 					"<font face=\"Courier\">"
 					"<table cellspacing=\"5\" border=\"0\">"
@@ -541,6 +546,24 @@ long frlat, frlon;
 				abs(frlon / 60000) % 60,
 				((double)(abs(frlon) % 60000)) / 1000.0,
 				(lon > 0) ? 'E' : 'W'
+#else
+				stringWithFormat:@
+					"<font face=\"Courier\"><b>"
+					"<table cellspacing=\"5\" border=\"0\">"
+					"<tr><td align=\"right\">%d&#176;</td>"
+					"<td align=\"right\">%.2f\'</td><td>%c</td></tr>"
+					"<tr><td align=\"right\">%d&#176;</td>"
+					"<td align=\"right\">%.2f\'</td><td>%c</td></tr></table>"
+					"</b></font>",
+
+				abs(frlat / 6000),
+				((double)(abs(frlat) % 6000)) / 100.0,
+				(lat > 0) ? 'N' : 'S',
+
+				abs(frlon / 6000),
+				((double)(abs(frlon) % 6000)) / 100.0,
+				(lon > 0) ? 'E' : 'W'
+#endif
 			]
 		];
 	}
