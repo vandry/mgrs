@@ -17,9 +17,6 @@ CFLAGS=-march=armv6 -mcpu=arm1176jzf-s -g
 
 APPDIR=$(DESTDIR)/Applications/MGRS.app
 
-INSTALL_DATA=MGRS.app/bg_normal.png MGRS.app/Info.plist
-INSTALL_EXEC=MGRS.app/MGRS
-
 GENERATED_GRAPHICS=MGRS.app/bg_normal.png MGRS.app/numeric_keyboard_normal.png \
 	MGRS.app/numeric_keyboard_disabled.png \
 	MGRS.app/numeric_keyboard_pressed.png \
@@ -29,6 +26,9 @@ GENERATED_GRAPHICS=MGRS.app/bg_normal.png MGRS.app/numeric_keyboard_normal.png \
 	MGRS.app/alpha2_keyboard_normal.png \
 	MGRS.app/alpha2_keyboard_disabled.png \
 	MGRS.app/alpha2_keyboard_pressed.png
+
+INSTALL_DATA=$(GENERATED_GRAPHICS) MGRS.app/Info.plist
+INSTALL_EXEC=MGRS.app/MGRS
 
 OBJ=MGRSapp.o
 
