@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		017043551270CC750089DF14 /* mgrs57.png in Resources */ = {isa = PBXBuildFile; fileRef = 017043531270CC750089DF14 /* mgrs57.png */; };
 		01FA84AC126F70610003B7A8 /* mgrs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A1126F70610003B7A8 /* mgrs.c */; };
 		01FA84AD126F70610003B7A8 /* polarst.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A3126F70610003B7A8 /* polarst.c */; };
 		01FA84AE126F70610003B7A8 /* tranmerc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A5126F70610003B7A8 /* tranmerc.c */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		017043531270CC750089DF14 /* mgrs57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mgrs57.png; sourceTree = "<group>"; };
 		01FA84A1126F70610003B7A8 /* mgrs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mgrs.c; sourceTree = "<group>"; };
 		01FA84A2126F70610003B7A8 /* mgrs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mgrs.h; sourceTree = "<group>"; };
 		01FA84A3126F70610003B7A8 /* polarst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = polarst.c; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				017043531270CC750089DF14 /* mgrs57.png */,
 				01FA849F126F70610003B7A8 /* mgrslib */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -201,6 +204,7 @@
 				01FA8515126F75BB0003B7A8 /* numeric_keyboard_disabled.png in Resources */,
 				01FA8516126F75BB0003B7A8 /* numeric_keyboard_normal.png in Resources */,
 				01FA8517126F75BB0003B7A8 /* numeric_keyboard_pressed.png in Resources */,
+				017043551270CC750089DF14 /* mgrs57.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
