@@ -6,19 +6,17 @@
 #import <UIKit/UITextView.h>
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIView.h>
-#import <GraphicsServices/GraphicsServices.h>
+//#import <GraphicsServices/GraphicsServices.h>
 #import "MGRSapp.h"
 #include "mgrslib/mgrs.h"
 
 int
 main(int argc, char **argv)
 {
-FILE *fp = fopen("/tmp/washere", "w");
-dup2(fileno(fp), 2);
+
 	NSAutoreleasePool *autoreleasePool = [
-		[ NSAutoreleasePool alloc ] init
-	];
-	UIApplicationUseLegacyEvents(YES);
+										  [ NSAutoreleasePool alloc ] init
+										  ];
 	int returnCode = UIApplicationMain(argc, argv, @"MGRSapp", @"MGRSapp");
 	[ autoreleasePool release ];
 	return returnCode;
@@ -28,38 +26,44 @@ static CGRect
 uiposrect(float x, float y, float width, float height)
 {
 	/* pass the lower left corner of the coordinates of this rectangle
-	   in the superview */
+	 in the superview */
 	return CGRectMake(
-		floor(y + height/2 - width/2),
-		floor(x + width/2 - height/2),
-		width, height
-	);
+					  floor(y + height/2 - width/2),
+					  floor(x + width/2 - height/2),
+					  width, height
+					  );
 }
 
 @implementation MGRSapp
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	[ UIHardware _setStatusBarHeight: 0.0 ];
-	//[ self setStatusBarHidden: YES ];
-	[ [ UIApplication sharedApplication ] setStatusBarHidden:YES ];
 
+	[[UIApplication sharedApplication] setStatusBarHidden:YES];
+	
 	window = [ [ UIWindow alloc ] initWithContentRect:
-		[ UIHardware fullScreenApplicationContentRect ]
-	];
-
-	CGRect rect = [ UIHardware fullScreenApplicationContentRect ];
+			  [[UIScreen mainScreen] applicationFrame]
+			  ];
+	
+	
+	CGRect rect = [[UIScreen mainScreen] applicationFrame];
 	rect.origin.x = rect.origin.y = 0.0f;
 
 	mainView = [ [ MainView alloc ] initWithFrame: rect ];
-
+	
+	
 	[ window setContentView: mainView ];
 	[ window orderFront: self ];
 	[ window makeKey: self ];
+	
 
 	[ mainView setHidden: NO ];
+
 	[ mainView set_GZD_SI: "18TXQ" ];
+
 	[ mainView set_eastnorth: "5763184896" ];
+
 	[ mainView convert ];
+
 }
 
 @end
@@ -67,21 +71,24 @@ uiposrect(float x, float y, float width, float height)
 @implementation MGRSText
 - (id)initWithFrame:(CGRect)rect {
 	self = [ super initWithFrame: rect ];
-	[ self setRotationBy: 90 ];
-	[ self setEditable: NO ];
+//	[ self setRotationBy: 90 ];
+	self.transform = CGAffineTransformMakeRotation(M_PI_2);
+//	[ self setEditable: NO ];
 	UIColor *background = [ UIColor clearColor ];
 	self.backgroundColor = background;
-
+	[self setTextAlignment:UITextAlignmentCenter];
+	self.userInteractionEnabled = YES;
+//	self.adjustsFontSizeToFitWidth = YES;
+//	self.minimumFontSize = 30;
+	self.font = [UIFont systemFontOfSize:35];
 	return self;
 }
 
+
 - (void)setText:(NSString *)t {
-	[ self setContentToHTMLString:
-		[ [
-			@"<center><big><big><big><big>" stringByAppendingString: t
-		] stringByAppendingString: @"</big></big></big></big></center>" ]
-	];
-}
+		[super setText:t];
+
+ }
 
 - (void)setmainview:(id)newmv
 {
@@ -95,19 +102,68 @@ uiposrect(float x, float y, float width, float height)
 }
 @end
 
+
 @implementation MGRSLeft
-- (void)mouseDown:(struct __GSEvent *)event {
-	[ parent invoke_left ];
-	[ super mouseDown: event ];
+
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	[parent invoke_left];
+    [self.nextResponder touchesBegan:touches withEvent:event];
+    [super touchesBegan:touches withEvent:event];
+
 }
+ 
 @end
 
 @implementation MGRSRight
-- (void)mouseDown:(struct __GSEvent *)event {
-	[ parent invoke_right ];
-	[ super mouseDown: event ];
+
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	[parent invoke_right];
+    [self.nextResponder touchesBegan:touches withEvent:event];
+    [super touchesBegan:touches withEvent:event];
+
+
 }
 @end
+
+@implementation MGRSTextHtml
+- (id)initWithFrame:(CGRect)rect {
+	self = [ super initWithFrame: rect ];
+	//	[ self setRotationBy: 90 ];
+	self.transform = CGAffineTransformMakeRotation(M_PI_2);
+	[ self setEditable: NO ];
+
+	UIColor *background = [ UIColor clearColor ];
+	self.backgroundColor = background;
+	self.scrollEnabled = NO;
+	
+
+	return self;
+}
+
+
+- (void)setText:(NSString *)t {
+	[ self setContentToHTMLString:
+	 [ [
+		@"<center><big><big><big><big>" stringByAppendingString: t
+		] stringByAppendingString: @"</big></big></big></big></center>" ]
+	 ];
+}
+- (void)setmainview:(id)newmv
+{
+	parent = newmv;
+}
+
+- (void)dealloc
+{
+	[ self dealloc ];
+	[ super dealloc ];
+}
+@end
+
+
+
 
 @implementation KeyOverlay
 - (void)set_rows:(int)newrows
@@ -122,14 +178,14 @@ uiposrect(float x, float y, float width, float height)
 
 - (void)set_master:(NSString *)imagename
 {
-int nkeys = rows * columns;
-int i;
-
+	int nkeys = rows * columns;
+	int i;
+	
 	master = [ UIImage applicationImageNamed: imagename ];
-
+	
 	height = master.size.width;
 	width = master.size.height;
-
+	
 	images = malloc(sizeof(*images) * nkeys);
 	views = malloc(sizeof(*views) * nkeys);
 	uiviews = malloc(sizeof(*uiviews) * nkeys);
@@ -140,35 +196,35 @@ int i;
 
 - (UIView *)get_overlay:(int)keyid
 {
-int row, col;
-float bwidth, bheight;
-
+	int row, col;
+	float bwidth, bheight;
+	
 	bwidth = width / columns;
 	bheight = height / rows;
-
+	
 	row = keyid / columns;
 	col = keyid % columns;
-
+	
 	if (!(images[keyid])) {
 		/* first reference, create the image */
 		float x = (rows - row - 1) * bheight;
 		float y = col * bwidth;
-
+		
 		CGImageRef newcgim = CGImageCreateWithImageInRect(
-			[ master imageRef ],
-			CGRectMake(x, y, bheight, bwidth)
-		);
+														  [ master imageRef ],
+														  CGRectMake(x, y, bheight, bwidth)
+														  );
 		images[keyid] = [ UIImage imageWithCGImage:newcgim ];
 		views[keyid] = [ [ UIImageView alloc ] initWithImage:
-			images[keyid]
-		];
+						images[keyid]
+						];
 		uiviews[keyid] = [ [
-			[ UIView alloc ]
-			initWithFrame: CGRectMake(x, y, bheight, bwidth)
-		] retain ];
+							[ UIView alloc ]
+							initWithFrame: CGRectMake(x, y, bheight, bwidth)
+							] retain ];
 		[ uiviews[keyid] addSubview: views[keyid] ];
 	}
-
+	
 	return uiviews[keyid];
 }
 @end
@@ -178,11 +234,11 @@ float bwidth, bheight;
 {
 	height = rect.size.width;
 	width = rect.size.height;
-
+	
 	self = [ super initWithFrame: rect ];
-
+	
 	down_keyid = -1;
-
+	
 	return self;
 }
 
@@ -195,9 +251,9 @@ float bwidth, bheight;
 
 - (void)set_disabled_image:(NSString *)imagename
 {
-int nkeys = rows * columns;
-int i;
-
+	int nkeys = rows * columns;
+	int i;
+	
 	disabled = [ KeyOverlay alloc ];
 	disabled_flags = malloc(nkeys * sizeof(*disabled_flags));
 	[ disabled set_rows: rows ];
@@ -240,33 +296,36 @@ int i;
 	[ [ pressed get_overlay: keyid ] removeFromSuperview ];
 }
 
-- (int)keyid_from_event:(struct __GSEvent *)event {
-CGPoint loc;
-float bwidth, bheight;
-int row, column;
+- (int)keyid_from_event:(NSSet *)touches {
+	CGPoint loc;
+	float bwidth, bheight;
+	int row, column;
 
+	
 	bwidth = width / columns;
 	bheight = height / rows;
+	
 
-	loc = [ self convertPoint:GSEventGetLocationInWindow(event) fromView:nil ];
-
+	
+	loc = [[touches anyObject] locationInView:self]; 
+	
 	column = loc.y / bwidth;
 	row = rows - ((int)(loc.x / bheight)) - 1;
-
+	
 	if (row < 0) { row = 0; column = 0; }
+	
+ return row * columns + column;
 
-	return row * columns + column;
 }
-
-- (void)mouseDown:(struct __GSEvent *)event
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-int keyid;
-
-	keyid = [ self keyid_from_event: event ];
+	int keyid;
+	
+	keyid = [ self keyid_from_event: touches ];
 	if (
 		(!disabled) ||	/* if either disabling is not active */
 		(!(disabled_flags[keyid]))	/* or this key is not disabled */
-	) {
+		) {
 		/* then proceed */
 		if (down_keyid >= 0) {
 			[ self unpress_key: down_keyid ];
@@ -274,14 +333,17 @@ int keyid;
 		down_keyid = keyid;
 		[ self depress_key: down_keyid ];
 	}
-	[ super mouseDown: event ];
+
+    [self.nextResponder touchesBegan:touches withEvent:event];
+    [super touchesBegan:touches withEvent:event];	
+	
 }
 
-- (void)mouseUp:(struct __GSEvent *)event
+- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-int keyid;
-
-	keyid = [ self keyid_from_event: event ];
+	int keyid;
+	
+	keyid = [ self keyid_from_event: touches ];
 	if (down_keyid >= 0) {
 		[ self unpress_key: down_keyid ];
 		if (down_keyid == keyid) {
@@ -290,8 +352,12 @@ int keyid;
 		}
 		down_keyid = -1;
 	}
-	[ super mouseDown: event ];
-}
+    [self.nextResponder touchesEnded:touches withEvent:event];
+    [super touchesEnded:touches withEvent:event];		
+	
+};
+
+
 
 - (void)setmainview:(id)newmv
 {
@@ -300,9 +366,9 @@ int keyid;
 
 - (void)disappear
 {
-int nkeys = rows * columns;
-int i;
-
+	int nkeys = rows * columns;
+	int i;
+	
 	if (disabled) {
 		for (i = 0; i < nkeys; i++) {
 			if (disabled_flags[i]) {
@@ -319,8 +385,8 @@ int i;
 
 - (void)dealloc
 {
-int i;
-
+	int i;
+	
 	if (disabled) {
 		free(disabled_flags);
 		[ disabled dealloc ];
@@ -358,8 +424,8 @@ int i;
 const char *alpha1_keys = "GHJKLMNPQRSTUVWXYZ";
 - (void)create
 {
-int i;
-
+	int i;
+	
 	rows = 3;
 	columns = 6;
 }
@@ -374,8 +440,8 @@ int i;
 const char *alpha2_keys = "ABCDEF";
 - (void)create
 {
-int i;
-
+	int i;
+	
 	rows = 2;
 	columns = 3;
 }
@@ -390,37 +456,37 @@ int i;
 
 - (id)initWithFrame:(CGRect)rect {
 	CGRect mgrs1_textrect, mgrs2_textrect, latlon_rect;
-
+	
 	input_mode = 0;
-
+	
 	self = [ super initWithFrame: rect ];
 	if (nil != self) {
 		GZDSI[0] = 0;
 		eastnorth[0] = 0;
-
+		
 		bgimage = [ UIImage applicationImageNamed:@"bg_normal.png" ];
 		background_view = [ [ UIImageView alloc ] initWithImage: bgimage ];
 		[ self addSubview: background_view ];
-
-		mgrs1_textrect = uiposrect(20, 220, 200, 60);
-		mgrs2_textrect = uiposrect(270, 220, 200, 60);
-		latlon_rect = uiposrect(70, 70, 350, 90);
-
+		
+		mgrs1_textrect = uiposrect(20, 240, 200, 60);
+		mgrs2_textrect = uiposrect(270, 240, 200, 60);
+		latlon_rect = uiposrect(70, 65, 350, 90);
+		
 		mgrs1_textview = [ [ MGRSLeft alloc ] initWithFrame: mgrs1_textrect ];
 		[ mgrs1_textview setText: @"" ];
 		[ mgrs1_textview setmainview: self ];
-
+		
 		mgrs2_textview = [ [ MGRSRight alloc ] initWithFrame: mgrs2_textrect ];
 		[ mgrs2_textview setText: @"" ];
 		[ mgrs2_textview setmainview: self ];
-
-		latlon_textview = [ [ MGRSText alloc ] initWithFrame: latlon_rect ];
+		
+		latlon_textview = [ [ MGRSTextHtml alloc ] initWithFrame: latlon_rect ];
 		[ latlon_textview setText: @"" ];
-
+		
 		[ self addSubview: latlon_textview ];
 		[ self addSubview: mgrs1_textview ];
 		[ self addSubview: mgrs2_textview ];
-
+		
 		knumeric = [ [ NumericKeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 160, 480) ];
 		[ knumeric set_image: @"numeric_keyboard_normal.png" ];
 		[ knumeric setHidden: NO ];
@@ -428,7 +494,7 @@ int i;
 		[ knumeric set_disabled_image: @"numeric_keyboard_disabled.png" ];
 		[ knumeric set_pressed_image: @"numeric_keyboard_pressed.png" ];
 		[ knumeric setmainview: self ];
-
+		
 		kalpha1 = [ [ Alpha1KeyboardView alloc ] initWithFrame: CGRectMake(0, 0, 192, 480) ];
 		[ kalpha1 set_image: @"alpha1_keyboard_normal.png" ];
 		[ kalpha1 setHidden: NO ];
@@ -436,7 +502,7 @@ int i;
 		[ kalpha1 set_disabled_image: @"alpha1_keyboard_disabled.png" ];
 		[ kalpha1 set_pressed_image: @"alpha1_keyboard_pressed.png" ];
 		[ kalpha1 setmainview: self ];
-
+		
 		kalpha2 = [ [ Alpha2KeyboardView alloc ] initWithFrame: CGRectMake(192, 240, 128, 240) ];
 		[ kalpha2 set_image: @"alpha2_keyboard_normal.png" ];
 		[ kalpha2 setHidden: NO ];
@@ -445,7 +511,7 @@ int i;
 		[ kalpha2 set_pressed_image: @"alpha2_keyboard_pressed.png" ];
 		[ kalpha2 setmainview: self ];
 	}
-
+	
 	return self;
 }
 
@@ -460,12 +526,12 @@ int i;
 }
 
 - (void)convert {
-char buf[20];
-NSString *degree;
-char *sample_mgrs = "18TXQ5763184896";
-double lat, lon;
-long frlat, frlon;
-
+	char buf[20];
+	NSString *degree;
+	char *sample_mgrs = "18TXQ5763184896";
+	double lat, lon;
+	long frlat, frlon;
+	
 	if (
 		(strlen(GZDSI) != 5) ||
 		(!((GZDSI[0] >= '0') && (GZDSI[0] <= '9'))) ||
@@ -479,15 +545,15 @@ long frlat, frlon;
 		(strlen(eastnorth) & 1) ||
 		(strlen(eastnorth) < 2) ||
 		(strlen(eastnorth) > 10)
-	) {
+		) {
 		[ latlon_textview setText: @"Syntax error in MGRS" ];
 		return;
 	}
-
+	
 	sprintf(buf, "%s%s", GZDSI, eastnorth);
-
+	
 	long result = Convert_MGRS_To_Geodetic(buf, &lat, &lon);
-
+	
 	if (result) {
 		if (result & MGRS_LAT_ERROR) {
 			[ latlon_textview setText: @"Latitude outside of valid range" ];
@@ -524,48 +590,48 @@ long frlat, frlon;
 #endif
 		
 		[ latlon_textview setText:
-			[ NSString
+		 [ NSString
 #ifdef STUPIDLY_PRECISE
-				stringWithFormat:@
-					"<font face=\"Courier\">"
-					"<table cellspacing=\"5\" border=\"0\">"
-					"<tr><td align=\"right\">%d&#176;</td>"
-					"<td align=\"right\">%d\'</td>"
-					"<td align=\"right\">%g\'\'</td><td>%c</td></tr>"
-					"<tr><td align=\"right\">%d&#176;</td>"
-					"<td align=\"right\">%d\'</td>"
-					"<td align=\"right\">%g\'\'</td><td>%c</td></tr></table>"
-					"</font>",
-
-				abs(frlat / 3600000),
-				abs(frlat / 60000) % 60,
-				((double)(abs(frlat) % 60000)) / 1000.0,
-				(lat > 0) ? 'N' : 'S',
-
-				abs(frlon / 3600000),
-				abs(frlon / 60000) % 60,
-				((double)(abs(frlon) % 60000)) / 1000.0,
-				(lon > 0) ? 'E' : 'W'
+		  stringWithFormat:@
+		  "<font face=\"Courier\">"
+		  "<table cellspacing=\"5\" border=\"0\">"
+		  "<tr><td align=\"right\">%d&#176;</td>"
+		  "<td align=\"right\">%d\'</td>"
+		  "<td align=\"right\">%g\'\'</td><td>%c</td></tr>"
+		  "<tr><td align=\"right\">%d&#176;</td>"
+		  "<td align=\"right\">%d\'</td>"
+		  "<td align=\"right\">%g\'\'</td><td>%c</td></tr></table>"
+		  "</font>",
+		  
+		  abs(frlat / 3600000),
+		  abs(frlat / 60000) % 60,
+		  ((double)(abs(frlat) % 60000)) / 1000.0,
+		  (lat > 0) ? 'N' : 'S',
+		  
+		  abs(frlon / 3600000),
+		  abs(frlon / 60000) % 60,
+		  ((double)(abs(frlon) % 60000)) / 1000.0,
+		  (lon > 0) ? 'E' : 'W'
 #else
-				stringWithFormat:@
-					"<font face=\"Courier\"><b>"
-					"<table cellspacing=\"5\" border=\"0\">"
-					"<tr><td align=\"right\">%d&#176;</td>"
-					"<td align=\"right\">%.2f\'</td><td>%c</td></tr>"
-					"<tr><td align=\"right\">%d&#176;</td>"
-					"<td align=\"right\">%.2f\'</td><td>%c</td></tr></table>"
-					"</b></font>",
-
-				abs(frlat / 6000),
-				((double)(abs(frlat) % 6000)) / 100.0,
-				(lat > 0) ? 'N' : 'S',
-
-				abs(frlon / 6000),
-				((double)(abs(frlon) % 6000)) / 100.0,
-				(lon > 0) ? 'E' : 'W'
+		  stringWithFormat:@
+		  "<font face=\"Courier\"><b>"
+		  "<table cellspacing=\"5\" border=\"0\">"
+		  "<tr><td align=\"right\">%d&#176;</td>"
+		  "<td align=\"right\">%.2f\'</td><td>%c</td></tr>"
+		  "<tr><td align=\"right\">%d&#176;</td>"
+		  "<td align=\"right\">%.2f\'</td><td>%c</td></tr></table>"
+		  "</b></font>",
+		  
+		  abs(frlat / 6000),
+		  ((double)(abs(frlat) % 6000)) / 100.0,
+		  (lat > 0) ? 'N' : 'S',
+		  
+		  abs(frlon / 6000),
+		  ((double)(abs(frlon) % 6000)) / 100.0,
+		  (lon > 0) ? 'E' : 'W'
 #endif
-			]
-		];
+		  ]
+		 ];
 	}
 }
 
@@ -573,7 +639,7 @@ long frlat, frlon;
 {
 	[ self set_eastnorth: "" ];
 	[ self set_GZD_SI: "" ];
-
+	
 	if (input_mode != 'l') {
 		if (input_mode == 'a') {
 			[ kalpha1 disappear ];
@@ -590,7 +656,7 @@ long frlat, frlon;
 - (void)invoke_right
 {
 	[ self set_eastnorth: "" ];
-
+	
 	if (input_mode != 'r') {
 		if (input_mode == 'a') {
 			[ kalpha1 disappear ];
@@ -606,12 +672,12 @@ long frlat, frlon;
 
 - (void)digit_pressed:(int)digit
 {
-char buf[20];
-
+	char buf[20];
+	
 	if (input_mode == 'l') {
 		sprintf(buf, "%s%d", GZDSI, digit);
 		[ self set_GZD_SI: buf ];
-
+		
 		if (strlen(buf) == 2) {
 			[ knumeric disappear ];
 			input_mode = 'a';
@@ -626,14 +692,14 @@ char buf[20];
 	} else {
 		sprintf(buf, "%s%d", eastnorth, digit);
 		[ self set_eastnorth: buf ];
-
+		
 		if ((strlen(buf) & 1) == 0) {
 			/* even number of digits */
 			[ knumeric enable_key: 11 ];	/* OK key */
 		} else {
 			[ knumeric disable_key: 11 ];	/* OK key */
 		}
-
+		
 		if (strlen(buf) == 10) {
 			[ self ok_pressed ];
 		}
@@ -642,11 +708,11 @@ char buf[20];
 
 - (void)letter_pressed:(char)l
 {
-char buf[20];
-
+	char buf[20];
+	
 	sprintf(buf, "%s%c", GZDSI, l);
 	[ self set_GZD_SI: buf ];
-
+	
 	if (strlen(buf) == 5) {
 		[ self invoke_right ];
 	} else if (strlen(buf) == 3) {
@@ -666,8 +732,8 @@ char buf[20];
 
 - (void)bs_pressed
 {
-char buf[20];
-
+	char buf[20];
+	
 	if (input_mode == 'l') {
 		strcpy(buf, GZDSI);
 	} else {

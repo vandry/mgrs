@@ -1,0 +1,320 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01FA84AC126F70610003B7A8 /* mgrs.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A1126F70610003B7A8 /* mgrs.c */; };
+		01FA84AD126F70610003B7A8 /* polarst.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A3126F70610003B7A8 /* polarst.c */; };
+		01FA84AE126F70610003B7A8 /* tranmerc.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A5126F70610003B7A8 /* tranmerc.c */; };
+		01FA84AF126F70610003B7A8 /* ups.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A7126F70610003B7A8 /* ups.c */; };
+		01FA84B0126F70610003B7A8 /* utm.c in Sources */ = {isa = PBXBuildFile; fileRef = 01FA84A9126F70610003B7A8 /* utm.c */; };
+		01FA850E126F75BB0003B7A8 /* alpha1_keyboard_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA8504126F75BB0003B7A8 /* alpha1_keyboard_disabled.png */; };
+		01FA850F126F75BB0003B7A8 /* alpha1_keyboard_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA8505126F75BB0003B7A8 /* alpha1_keyboard_normal.png */; };
+		01FA8510126F75BB0003B7A8 /* alpha1_keyboard_pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA8506126F75BB0003B7A8 /* alpha1_keyboard_pressed.png */; };
+		01FA8511126F75BB0003B7A8 /* alpha2_keyboard_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA8507126F75BB0003B7A8 /* alpha2_keyboard_disabled.png */; };
+		01FA8512126F75BB0003B7A8 /* alpha2_keyboard_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA8508126F75BB0003B7A8 /* alpha2_keyboard_normal.png */; };
+		01FA8513126F75BB0003B7A8 /* alpha2_keyboard_pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA8509126F75BB0003B7A8 /* alpha2_keyboard_pressed.png */; };
+		01FA8514126F75BB0003B7A8 /* bg_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA850A126F75BB0003B7A8 /* bg_normal.png */; };
+		01FA8515126F75BB0003B7A8 /* numeric_keyboard_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA850B126F75BB0003B7A8 /* numeric_keyboard_disabled.png */; };
+		01FA8516126F75BB0003B7A8 /* numeric_keyboard_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA850C126F75BB0003B7A8 /* numeric_keyboard_normal.png */; };
+		01FA8517126F75BB0003B7A8 /* numeric_keyboard_pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 01FA850D126F75BB0003B7A8 /* numeric_keyboard_pressed.png */; };
+		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		01FA84A1126F70610003B7A8 /* mgrs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mgrs.c; sourceTree = "<group>"; };
+		01FA84A2126F70610003B7A8 /* mgrs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mgrs.h; sourceTree = "<group>"; };
+		01FA84A3126F70610003B7A8 /* polarst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = polarst.c; sourceTree = "<group>"; };
+		01FA84A4126F70610003B7A8 /* polarst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = polarst.h; sourceTree = "<group>"; };
+		01FA84A5126F70610003B7A8 /* tranmerc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tranmerc.c; sourceTree = "<group>"; };
+		01FA84A6126F70610003B7A8 /* tranmerc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tranmerc.h; sourceTree = "<group>"; };
+		01FA84A7126F70610003B7A8 /* ups.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ups.c; sourceTree = "<group>"; };
+		01FA84A8126F70610003B7A8 /* ups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ups.h; sourceTree = "<group>"; };
+		01FA84A9126F70610003B7A8 /* utm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utm.c; sourceTree = "<group>"; };
+		01FA84AA126F70610003B7A8 /* utm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utm.h; sourceTree = "<group>"; };
+		01FA84E0126F72E70003B7A8 /* MGRSapp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGRSapp.h; sourceTree = "<group>"; };
+		01FA8504126F75BB0003B7A8 /* alpha1_keyboard_disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alpha1_keyboard_disabled.png; sourceTree = "<group>"; };
+		01FA8505126F75BB0003B7A8 /* alpha1_keyboard_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alpha1_keyboard_normal.png; sourceTree = "<group>"; };
+		01FA8506126F75BB0003B7A8 /* alpha1_keyboard_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alpha1_keyboard_pressed.png; sourceTree = "<group>"; };
+		01FA8507126F75BB0003B7A8 /* alpha2_keyboard_disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alpha2_keyboard_disabled.png; sourceTree = "<group>"; };
+		01FA8508126F75BB0003B7A8 /* alpha2_keyboard_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alpha2_keyboard_normal.png; sourceTree = "<group>"; };
+		01FA8509126F75BB0003B7A8 /* alpha2_keyboard_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alpha2_keyboard_pressed.png; sourceTree = "<group>"; };
+		01FA850A126F75BB0003B7A8 /* bg_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_normal.png; sourceTree = "<group>"; };
+		01FA850B126F75BB0003B7A8 /* numeric_keyboard_disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = numeric_keyboard_disabled.png; sourceTree = "<group>"; };
+		01FA850C126F75BB0003B7A8 /* numeric_keyboard_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = numeric_keyboard_normal.png; sourceTree = "<group>"; };
+		01FA850D126F75BB0003B7A8 /* numeric_keyboard_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = numeric_keyboard_pressed.png; sourceTree = "<group>"; };
+		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1D6058910D05DD3D006BFB54 /* MGRS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MGRS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		32CA4F630368D1EE00C91783 /* MGRS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGRS_Prefix.pch; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* MGRS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MGRS-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
+				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01FA849F126F70610003B7A8 /* mgrslib */ = {
+			isa = PBXGroup;
+			children = (
+				01FA84A1126F70610003B7A8 /* mgrs.c */,
+				01FA84A2126F70610003B7A8 /* mgrs.h */,
+				01FA84A3126F70610003B7A8 /* polarst.c */,
+				01FA84A4126F70610003B7A8 /* polarst.h */,
+				01FA84A5126F70610003B7A8 /* tranmerc.c */,
+				01FA84A6126F70610003B7A8 /* tranmerc.h */,
+				01FA84A7126F70610003B7A8 /* ups.c */,
+				01FA84A8126F70610003B7A8 /* ups.h */,
+				01FA84A9126F70610003B7A8 /* utm.c */,
+				01FA84AA126F70610003B7A8 /* utm.h */,
+			);
+			path = mgrslib;
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* MGRS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
+			isa = PBXGroup;
+			children = (
+				01FA849F126F70610003B7A8 /* mgrslib */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = CustomTemplate;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				01FA84E0126F72E70003B7A8 /* MGRSapp.h */,
+				32CA4F630368D1EE00C91783 /* MGRS_Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				01FA8504126F75BB0003B7A8 /* alpha1_keyboard_disabled.png */,
+				01FA8505126F75BB0003B7A8 /* alpha1_keyboard_normal.png */,
+				01FA8506126F75BB0003B7A8 /* alpha1_keyboard_pressed.png */,
+				01FA8507126F75BB0003B7A8 /* alpha2_keyboard_disabled.png */,
+				01FA8508126F75BB0003B7A8 /* alpha2_keyboard_normal.png */,
+				01FA8509126F75BB0003B7A8 /* alpha2_keyboard_pressed.png */,
+				01FA850A126F75BB0003B7A8 /* bg_normal.png */,
+				01FA850B126F75BB0003B7A8 /* numeric_keyboard_disabled.png */,
+				01FA850C126F75BB0003B7A8 /* numeric_keyboard_normal.png */,
+				01FA850D126F75BB0003B7A8 /* numeric_keyboard_pressed.png */,
+				8D1107310486CEB800E47090 /* MGRS-Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* MGRS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "MGRS" */;
+			buildPhases = (
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+				01FA847E126F6D7E0003B7A8 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MGRS;
+			productName = MGRS;
+			productReference = 1D6058910D05DD3D006BFB54 /* MGRS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MGRS" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* MGRS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01FA850E126F75BB0003B7A8 /* alpha1_keyboard_disabled.png in Resources */,
+				01FA850F126F75BB0003B7A8 /* alpha1_keyboard_normal.png in Resources */,
+				01FA8510126F75BB0003B7A8 /* alpha1_keyboard_pressed.png in Resources */,
+				01FA8511126F75BB0003B7A8 /* alpha2_keyboard_disabled.png in Resources */,
+				01FA8512126F75BB0003B7A8 /* alpha2_keyboard_normal.png in Resources */,
+				01FA8513126F75BB0003B7A8 /* alpha2_keyboard_pressed.png in Resources */,
+				01FA8514126F75BB0003B7A8 /* bg_normal.png in Resources */,
+				01FA8515126F75BB0003B7A8 /* numeric_keyboard_disabled.png in Resources */,
+				01FA8516126F75BB0003B7A8 /* numeric_keyboard_normal.png in Resources */,
+				01FA8517126F75BB0003B7A8 /* numeric_keyboard_pressed.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		01FA847E126F6D7E0003B7A8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nexport CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ]; then\n/Developer/iphoneentitlements322/gen_entitlements.py \"my.company.${PROJECT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\";\ncodesign -f -s \"iPhone Pwned Developer\" --entitlements \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				01FA84AC126F70610003B7A8 /* mgrs.c in Sources */,
+				01FA84AD126F70610003B7A8 /* polarst.c in Sources */,
+				01FA84AE126F70610003B7A8 /* tranmerc.c in Sources */,
+				01FA84AF126F70610003B7A8 /* ups.c in Sources */,
+				01FA84B0126F70610003B7A8 /* utm.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MGRS_Prefix.pch;
+				INFOPLIST_FILE = "MGRS-Info.plist";
+				PRODUCT_NAME = MGRS;
+			};
+			name = Debug;
+		};
+		1D6058950D05DD3E006BFB54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MGRS_Prefix.pch;
+				INFOPLIST_FILE = "MGRS-Info.plist";
+				PRODUCT_NAME = MGRS;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = iphoneos3.1.3;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PREBINDING = NO;
+				SDKROOT = iphoneos3.1.3;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "MGRS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* Debug */,
+				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MGRS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

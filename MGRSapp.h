@@ -3,7 +3,17 @@
 #import <UIKit/UITextView.h>
 #import <UIKit/UIApplication.h>
 
-@interface MGRSText : UITextView
+@interface MGRSText : UILabel
+{
+	NSObject *parent;
+}
+- (id)initWithFrame:(CGRect)frame;
+- (void)setText:(NSString *)t;
+- (void)setmainview:(id)newmv;
+- (void)dealloc;
+@end
+
+@interface MGRSTextHtml : UITextView
 {
 	NSObject *parent;
 }
@@ -16,13 +26,14 @@
 @interface MGRSLeft : MGRSText
 {
 }
-- (void)mouseDown:(struct __GSEvent *)event;
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 @end
 
 @interface MGRSRight : MGRSText
 {
+	
 }
-- (void)mouseDown:(struct __GSEvent *)event;
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 @end
 
 @interface KeyOverlay : NSObject
@@ -65,9 +76,9 @@
 - (void)enable_key:(int)keyid;
 - (void)depress_key:(int)keyid;
 - (void)unpress_key:(int)keyid;
-- (int)keyid_from_event:(struct __GSEvent *)event;
-- (void)mouseDown:(struct __GSEvent *)event;
-- (void)mouseUp:(struct __GSEvent *)event;
+- (int)keyid_from_event:(NSSet *)touches;
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
 - (void)disappear;
 - (void)dealloc;
 @end
