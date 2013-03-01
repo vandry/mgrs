@@ -1,0 +1,318 @@
+<html><head><title>MGRS converter</title>
+<style type="text/css">
+<!--
+body {
+	margin: 0;
+	padding: 0;
+} 
+table {
+	table-layout: fixed;
+	width: 100%;
+	height: 100%;
+}
+table.keyboard { 
+	border-spacing: 0;
+	border-collapse: collapse;
+	background-color: #FFF;
+}
+td.keycap {
+	background-color: #FFF;
+	color: #000;
+	border-style:solid;
+	border-width:1px;
+	border-color:black;
+	text-align:center;
+	font-size: 200%;
+}
+td.ok {
+	background-color: #0c0;
+}
+td.cancel {
+	background-color: #c00;
+}
+td.pressed {
+	background-color: #888;
+}
+td.insensitive {
+	opacity: 0.2;
+}
+div#numeric {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 25%;
+	display: none;
+}
+div#alpha {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 75%;
+	display: none;
+}
+div#line1 {
+	position: absolute;
+	top: 10%;
+	height: 10%;
+}
+td#inputfield {
+	background-color: #fff;
+	text-align: center;
+	font-size: 200%;
+}
+div#line2 {
+	position: absolute;
+	top: 50%;
+	height: 20%;
+}
+td#outputfield {
+	background-color: #fff;
+	text-align: center;
+	font-size: 200%;
+}
+table.latlon {
+	font-size: 200%;
+}
+.roundborder {
+	border-radius: 30px;
+	border-style:solid;
+	border-width:4px;
+	border-color:black;
+}
+-->
+</style>
+<script type="text/javascript">
+
+function conversion_error(message) {
+	document.getElementById("outputfield").innerHTML = message;
+}
+
+function conversion_success(lat, lon) {
+	frlat = Math.round(parseFloat(lat) * 6000);
+	frlon = Math.round(parseFloat(lon) * 6000);
+	var lat_h = 'N';
+	if (frlat < 0.0) {
+		lat_h = 'S';
+		frlat = -frlat;
+	}
+	var lon_h = 'E';
+	if (frlon < 0.0) {
+		lon_h = 'W';
+		frlon = -frlon;
+	}
+	var latmin = (frlat % 6000) / 100;
+	var lonmin = (frlon % 6000) / 100;
+	lat = frlat / 6000;
+	lon = frlon / 6000;
+	var s = "<table class=\"latlon\">" +
+		"<tr><td align=\"right\">" + lat.toFixed(0) + "&#176;</td>" +
+		"<td align=\"right\">" +
+		latmin.toFixed(2) +
+		"'</td><td>" + lat_h + "</td></tr>" +
+		"<tr><td align=\"right\">" + lon.toFixed(0) + "&#176;</td>" +
+		"<td align=\"right\">" +
+		lonmin.toFixed(2) +
+		"'</td><td>" + lon_h + "</td></tr></table>";
+	document.getElementById("outputfield").innerHTML = s;
+}
+
+function onload() {
+	var keycaps = document.getElementsByClassName("keycap");
+	var inputfield = document.getElementById("inputfield");
+	var outputfield = document.getElementById("outputfield");
+	var alpha = document.getElementById("alpha");
+	var numeric = document.getElementById("numeric");
+	var not3_list = document.getElementsByClassName("not3");
+	var not5_list = document.getElementsByClassName("not5");
+	var ok_list = document.getElementsByClassName("ok");
+	function set_insensitive(e) {
+		if (e.className.substring(0, 12) != 'insensitive ') {
+			e.className = 'insensitive ' + e.className;
+		}
+	}
+	function set_sensitive(e) {
+		if (e.className.substring(0, 12) == 'insensitive ') {
+			e.className = e.className.substring(12);
+		}
+	}
+	function adjust_keyboard() {
+		var t = inputfield.innerHTML;
+		if ((t.length < 2) || (t.length > 4)) {
+			alpha.style.display = 'none';
+			numeric.style.display = 'inherit';
+		} else {
+			alpha.style.display = 'inherit';
+			numeric.style.display = 'none';
+		}
+		if (t.length == 2) {
+			for (var i = 0; i < not3_list.length; i++) {
+				set_insensitive(not3_list[i]);
+			}
+		} else {
+			for (var i = 0; i < not3_list.length; i++) {
+				set_sensitive(not3_list[i]);
+			}
+		}
+		if (t.length == 4) {
+			for (var i = 0; i < not5_list.length; i++) {
+				set_insensitive(not5_list[i]);
+			}
+		} else {
+			for (var i = 0; i < not5_list.length; i++) {
+				set_sensitive(not5_list[i]);
+			}
+		}
+		if ((t.length > 5) && ((t.length & 1) == 1)) {
+			for (var i = 0; i < ok_list.length; i++) {
+				set_sensitive(ok_list[i]);
+			}
+		} else {
+			for (var i = 0; i < ok_list.length; i++) {
+				set_insensitive(ok_list[i]);
+			}
+		}
+	}
+	function is_sensitive(e) {
+		return (e.className.substring(0, 12) != 'insensitive ');
+	}
+	function convert() {
+		alpha.style.display = 'none';
+		numeric.style.display = 'none';
+		if (/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent)) {
+			var iframe = document.createElement("IFRAME");
+			iframe.setAttribute("src", "mgrs-convert:" +
+				inputfield.innerHTML);
+			document.documentElement.appendChild(iframe);
+			iframe.parentNode.removeChild(iframe);
+			iframe = null;
+		} else {
+			outputfield.innerHTML = "This demo cannot do conversion<br /> for " + inputfield.innerHTML;
+		}
+	}
+	for (var i = 0; i < keycaps.length; i++) {
+		keycaps[i].addEventListener('mousedown', function(e) {
+			if (!is_sensitive(e.target)) return;
+			e.target.className += " pressed";
+		}, false);
+		keycaps[i].addEventListener('mouseup', function(e) {
+			if (!is_sensitive(e.target)) return;
+			var c = e.target.className;
+			e.target.className = c.substring(0, c.length-8);
+		}, false);
+		keycaps[i].addEventListener('click', function(e) {
+			if (!is_sensitive(e.target)) return;
+			var key = e.target.innerHTML;
+			if (key == "BS") {
+				inputfield.innerHTML = inputfield.innerHTML.substring(
+					0, inputfield.innerHTML.length-1
+				);
+				if (inputfield.innerHTML == '') {
+					inputfield.innerHTML = "\u00a0";
+				}
+				adjust_keyboard();
+			} else if (key == "OK") {
+				convert();
+			} else {
+				if (inputfield.innerHTML == "&nbsp;") {
+					inputfield.innerHTML = key;
+				} else {
+					inputfield.innerHTML += key;
+				}
+				if (inputfield.innerHTML.length == 15) {
+					convert();
+				} else {
+					adjust_keyboard();
+				}
+			}
+		}, false);
+	}
+	inputfield.addEventListener('click', function(e) {
+		alpha.style.display = 'none';
+		numeric.style.display = 'inherit';
+		inputfield.innerHTML = "\u00a0";
+	}, false);
+	inputfield.innerHTML = "18TXQ5763184896";
+	convert();
+}
+
+</script>
+</head>
+<body onload="javascript:onload();" bgcolor="yellow">
+<div id="line1">
+	<table border="0">
+	<tr>
+		<td width="20%"></td>
+		<td id="inputfield" class="roundborder"></td>
+		<td width="20%"></td>
+	</tr>
+	</table>
+</div>
+<div id="line2">
+	<table border="0">
+	<tr>
+		<td width="15%"></td>
+		<td id="outputfield" class="roundborder"></td>
+		<td width="15%"></td>
+	</tr>
+	</table>
+</div>
+<div id="numeric">
+	<table class="keyboard">
+	<tr>
+		<td class="keycap">0</td>
+		<td class="keycap">1</td>
+		<td class="keycap">2</td>
+		<td class="keycap">3</td>
+		<td class="keycap">4</td>
+		<td class="keycap cancel">BS</td>
+	</tr>
+	<tr>
+		<td class="keycap">5</td>
+		<td class="keycap">6</td>
+		<td class="keycap">7</td>
+		<td class="keycap">8</td>
+		<td class="keycap">9</td>
+		<td class="keycap ok">OK</td>
+	</tr>
+	</table>
+</div>
+<div id="alpha">
+	<table class="keyboard">
+	<tr>
+		<td class="keycap not3">A</td>
+		<td class="keycap not3">B</td>
+		<td class="keycap">C</td>
+		<td class="keycap">D</td>
+		<td class="keycap">E</td>
+	</tr>
+	<tr>
+		<td class="keycap">F</td>
+		<td class="keycap">G</td>
+		<td class="keycap">H</td>
+		<td class="keycap">J</td>
+		<td class="keycap">K</td>
+	</tr>
+	<tr>
+		<td class="keycap">L</td>
+		<td class="keycap">M</td>
+		<td class="keycap">N</td>
+		<td class="keycap">P</td>
+		<td class="keycap">Q</td>
+	</tr>
+	<tr>
+		<td class="keycap">R</td>
+		<td class="keycap">S</td>
+		<td class="keycap">T</td>
+		<td class="keycap">U</td>
+		<td class="keycap">V</td>
+	</tr>
+	<tr>
+		<td class="keycap not5">W</td>
+		<td class="keycap not5">X</td>
+		<td class="keycap not3 not5">Y</td>
+		<td class="keycap not3 not5">Z</td>
+		<td class="keycap cancel">BS</td>
+	</tr>
+	</table>
+</body>
+</html>

@@ -135,6 +135,7 @@
 {
 	UIWindow *window;
 	MainView *mainView;
+	UIWebView *webView;
 }
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 @end
