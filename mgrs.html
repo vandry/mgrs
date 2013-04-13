@@ -102,8 +102,8 @@ function conversion_success(lat, lon) {
 	}
 	var latmin = (frlat % 6000) / 100;
 	var lonmin = (frlon % 6000) / 100;
-	lat = frlat / 6000;
-	lon = frlon / 6000;
+	lat = Math.floor(frlat / 6000);
+	lon = Math.floor(frlon / 6000);
 	var s = "<table class=\"latlon\">" +
 		"<tr><td align=\"right\">" + lat.toFixed(0) + "&#176;</td>" +
 		"<td align=\"right\">" +

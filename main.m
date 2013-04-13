@@ -150,7 +150,7 @@ uiposrect(float x, float y, float width, float height)
 		lat = lat / M_PI * 180.0;
 		lon = lon / M_PI * 180.0;
 		[ webView stringByEvaluatingJavaScriptFromString:[
-			NSString stringWithFormat:@"conversion_success(%f,%f)",
+			NSString stringWithFormat:@"conversion_success(%.10f,%.10f)",
 			lat, lon
 		] ];
 	}
