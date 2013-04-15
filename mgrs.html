@@ -189,19 +189,11 @@ function onload() {
 			outputfield.innerHTML = "This demo cannot do conversion<br /> for " + inputfield.innerHTML;
 		}
 	}
-	for (var i = 0; i < keycaps.length; i++) {
-		keycaps[i].addEventListener('mousedown', function(e) {
-			if (!is_sensitive(e.target)) return;
-			e.target.className += " pressed";
-		}, false);
-		keycaps[i].addEventListener('mouseup', function(e) {
-			if (!is_sensitive(e.target)) return;
-			var c = e.target.className;
-			e.target.className = c.substring(0, c.length-8);
-		}, false);
-		keycaps[i].addEventListener('click', function(e) {
-			if (!is_sensitive(e.target)) return;
-			var key = e.target.innerHTML;
+	function add_keycap_events(kc) {
+		var moved_away = false;
+		var key = kc.innerHTML;
+
+		function action() {
 			if (key == "BS") {
 				inputfield.innerHTML = inputfield.innerHTML.substring(
 					0, inputfield.innerHTML.length-1
@@ -224,12 +216,71 @@ function onload() {
 					adjust_keyboard();
 				}
 			}
+		}
+		function unpress() {
+			var c = kc.className;
+			if (c.substring(c.length-8) == " pressed") {
+				kc.className = c.substring(0, c.length-8);
+			}
+		}
+		kc.addEventListener('mousedown', function(e) {
+			if (!is_sensitive(kc)) return;
+			kc.className += " pressed";
 		}, false);
+		kc.addEventListener('mouseout', function(e) {
+			if (!is_sensitive(kc)) return;
+			unpress();
+		}, false);
+		kc.addEventListener('mouseup', function(e) {
+			if (!is_sensitive(kc)) return;
+			unpress();
+		}, false);
+		kc.addEventListener('touchstart', function(e) {
+			moved_away = false;
+			kc.className += " pressed";
+			e.preventDefault();
+		}, false);
+		kc.addEventListener('touchend', function(e) {
+			if (!is_sensitive(kc)) return;
+			if (!moved_away) {
+				unpress();
+				action();
+			}
+			e.preventDefault();
+		}, false);
+		kc.addEventListener('touchmove', function(e) {
+			if (moved_away) return;
+			var touch = event.touches[0];
+			if (kc !== document.elementFromPoint(touch.pageX, touch.pageY)) {
+				moved_away = true;
+				unpress();
+			}
+		}, false);
+		kc.addEventListener('click', function(e) {
+			// if we are on a device that can get touch events
+			// then we get both a touchend and a click. Respond
+			// only to the touchend
+			if (!is_sensitive(kc)) return;
+			action();
+		}, false);
+	}
+	document.body.addEventListener('touchmove', function(event) {
+		event.preventDefault();
+	}, false);
+	var keymoving = false;
+	for (var i = 0; i < keycaps.length; i++) {
+		add_keycap_events(keycaps[i]);
 	}
 	inputfield.addEventListener('click', function(e) {
 		alpha.style.display = 'none';
 		numeric.style.display = 'inherit';
 		inputfield.innerHTML = "\u00a0";
+	}, false);
+	inputfield.addEventListener('touchstart', function(e) {
+		alpha.style.display = 'none';
+		numeric.style.display = 'inherit';
+		inputfield.innerHTML = "\u00a0";
+		e.preventDefault();
 	}, false);
 	inputfield.innerHTML = "18TXQ5763184896";
 	convert();
