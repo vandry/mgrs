@@ -43,6 +43,21 @@ div#numeric {
 	height: 25%;
 	display: none;
 }
+div#southpole {
+	position: absolute;
+	bottom: 25%;
+	width: 40%;
+	height: 15%;
+	display: none;
+}
+div#northpole {
+	position: absolute;
+	bottom: 25%;
+	width: 40%;
+	left: 60%;
+	height: 15%;
+	display: none;
+}
 div#alpha {
 	position: absolute;
 	bottom: 0px;
@@ -122,8 +137,11 @@ function onload() {
 	var outputfield = document.getElementById("outputfield");
 	var alpha = document.getElementById("alpha");
 	var numeric = document.getElementById("numeric");
+	var northpole = document.getElementById("northpole");
+	var southpole = document.getElementById("southpole");
 	var not3_list = document.getElementsByClassName("not3");
 	var not5_list = document.getElementsByClassName("not5");
+	var not1_list = document.getElementsByClassName("not1");
 	var ok_list = document.getElementsByClassName("ok");
 	function set_insensitive(e) {
 		if (e.className.substring(0, 12) != 'insensitive ') {
@@ -137,9 +155,50 @@ function onload() {
 	}
 	function adjust_keyboard() {
 		var t = inputfield.innerHTML;
+		if ((t.length > 0) && (t.substring(0, 1) >= 'A')) {
+			northpole.style.display = 'none';
+			southpole.style.display = 'none';
+			// Different string format in the polar regions
+			if (t.length < 3) {
+				alpha.style.display = 'inherit';
+				numeric.style.display = 'none';
+				if (t.length == 1) {
+					for (var i = 0; i < not1_list.length; i++) {
+						set_insensitive(not1_list[i]);
+					}
+				} else {
+					for (var i = 0; i < not1_list.length; i++) {
+						set_sensitive(not1_list[i]);
+					}
+				}
+			} else {
+				alpha.style.display = 'none';
+				numeric.style.display = 'inherit';
+				if ((t.length > 3) && ((t.length & 1) == 1)) {
+					for (var i = 0; i < ok_list.length; i++) {
+						set_sensitive(ok_list[i]);
+					}
+				} else {
+					for (var i = 0; i < ok_list.length; i++) {
+						set_insensitive(ok_list[i]);
+					}
+				}
+			}
+			return;
+		}
 		if ((t.length < 2) || (t.length > 4)) {
 			alpha.style.display = 'none';
 			numeric.style.display = 'inherit';
+			if (t == "&nbsp;") {
+				northpole.style.display = 'inherit';
+				southpole.style.display = 'inherit';
+				for (var i = 0; i < not1_list.length; i++) {
+					set_sensitive(not1_list[i]);
+				}
+			} else {
+				northpole.style.display = 'none';
+				southpole.style.display = 'none';
+			}
 		} else {
 			alpha.style.display = 'inherit';
 			numeric.style.display = 'none';
@@ -189,6 +248,16 @@ function onload() {
 			outputfield.innerHTML = "This demo cannot do conversion<br /> for " + inputfield.innerHTML;
 		}
 	}
+	function start_editing() {
+		alpha.style.display = 'none';
+		numeric.style.display = 'inherit';
+		southpole.style.display = 'inherit';
+		northpole.style.display = 'inherit';
+		inputfield.innerHTML = "\u00a0";
+		for (var i = 0; i < ok_list.length; i++) {
+			set_insensitive(ok_list[i]);
+		}
+	}
 	function add_keycap_events(kc) {
 		var moved_away = false;
 		var key = kc.innerHTML;
@@ -211,6 +280,11 @@ function onload() {
 					inputfield.innerHTML += key;
 				}
 				if (inputfield.innerHTML.length == 15) {
+					convert();
+				} else if (
+					(inputfield.innerHTML.substring(0, 1) >= 'A') &&
+					(inputfield.innerHTML.length == 13)
+				) {
 					convert();
 				} else {
 					adjust_keyboard();
@@ -272,14 +346,10 @@ function onload() {
 		add_keycap_events(keycaps[i]);
 	}
 	inputfield.addEventListener('click', function(e) {
-		alpha.style.display = 'none';
-		numeric.style.display = 'inherit';
-		inputfield.innerHTML = "\u00a0";
+		start_editing();
 	}, false);
 	inputfield.addEventListener('touchstart', function(e) {
-		alpha.style.display = 'none';
-		numeric.style.display = 'inherit';
-		inputfield.innerHTML = "\u00a0";
+		start_editing();
 		e.preventDefault();
 	}, false);
 	inputfield.innerHTML = "18TXQ5763184896";
@@ -327,14 +397,30 @@ function onload() {
 	</tr>
 	</table>
 </div>
+<div id="southpole">
+	<table class="keyboard">
+	<tr>
+		<td class="keycap">A</td>
+		<td class="keycap">B</td>
+	</tr>
+	</table>
+</div>
+<div id="northpole">
+	<table class="keyboard">
+	<tr>
+		<td class="keycap">Y</td>
+		<td class="keycap">Z</td>
+	</tr>
+	</table>
+</div>
 <div id="alpha">
 	<table class="keyboard">
 	<tr>
 		<td class="keycap not3">A</td>
 		<td class="keycap not3">B</td>
 		<td class="keycap">C</td>
-		<td class="keycap">D</td>
-		<td class="keycap">E</td>
+		<td class="keycap not1">D</td>
+		<td class="keycap not1">E</td>
 	</tr>
 	<tr>
 		<td class="keycap">F</td>
@@ -345,8 +431,8 @@ function onload() {
 	</tr>
 	<tr>
 		<td class="keycap">L</td>
-		<td class="keycap">M</td>
-		<td class="keycap">N</td>
+		<td class="keycap not1">M</td>
+		<td class="keycap not1">N</td>
 		<td class="keycap">P</td>
 		<td class="keycap">Q</td>
 	</tr>
@@ -355,10 +441,10 @@ function onload() {
 		<td class="keycap">S</td>
 		<td class="keycap">T</td>
 		<td class="keycap">U</td>
-		<td class="keycap">V</td>
+		<td class="keycap not1">V</td>
 	</tr>
 	<tr>
-		<td class="keycap not5">W</td>
+		<td class="keycap not5 not1">W</td>
 		<td class="keycap not5">X</td>
 		<td class="keycap not3 not5">Y</td>
 		<td class="keycap not3 not5">Z</td>
