@@ -54,7 +54,7 @@ uiposrect(float x, float y, float width, float height)
 		webView = [ [ UIWebView alloc] initWithFrame: rect ];
 		webView.delegate = self;
 		NSString *path = [ [ NSBundle mainBundle ]
-			 pathForResource:@"mgrs.html" ofType:nil
+			 pathForResource:@"mgrs.embedded.html" ofType:nil
 		];
 		NSURL *fileURL = [ [ NSURL alloc ] initFileURLWithPath:path ];
 		NSURLRequest *req = [ NSURLRequest requestWithURL:fileURL ];

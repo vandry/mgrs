@@ -28,7 +28,6 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		8120F2E616E106BA00606A79 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8120F2E516E106BA00606A79 /* Default-568h@2x.png */; };
-		8192BFDC16E164C600A0B58C /* mgrs.html in Resources */ = {isa = PBXBuildFile; fileRef = 8192BFDB16E164C600A0B58C /* mgrs.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,7 +60,6 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* MGRS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGRS_Prefix.pch; sourceTree = "<group>"; };
 		8120F2E516E106BA00606A79 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		8192BFDB16E164C600A0B58C /* mgrs.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = mgrs.html; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* MGRS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MGRS-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,7 +129,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8192BFDB16E164C600A0B58C /* mgrs.html */,
 				01FA8504126F75BB0003B7A8 /* alpha1_keyboard_disabled.png */,
 				01FA8505126F75BB0003B7A8 /* alpha1_keyboard_normal.png */,
 				01FA8506126F75BB0003B7A8 /* alpha1_keyboard_pressed.png */,
@@ -164,6 +161,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "MGRS" */;
 			buildPhases = (
+				81E36D21174710CD0075DF27 /* ShellScript */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -219,7 +217,6 @@
 				01FA8517126F75BB0003B7A8 /* numeric_keyboard_pressed.png in Resources */,
 				017043551270CC750089DF14 /* mgrs57.png in Resources */,
 				8120F2E616E106BA00606A79 /* Default-568h@2x.png in Resources */,
-				8192BFDC16E164C600A0B58C /* mgrs.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,6 +235,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nexport CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ]; then\n/Developer/iphoneentitlements322/gen_entitlements.py \"my.company.${PROJECT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\";\ncodesign -f -s \"iPhone Pwned Developer\" --entitlements \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi";
+		};
+		81E36D21174710CD0075DF27 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/mgrs.html",
+				"$(SRCROOT)/.git/refs/heads",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(WRAPPER_NAME)/mgrs.embedded.html",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nversion=`git describe --dirty`\nsed -e '/<div id=\"versionquery\">/s/$/<a href=\"javascript:alert('\\'\"Version $version\"\\'');\">?<\\/a>/' <\"${SRCROOT}/mgrs.html\" >\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/mgrs.embedded.html\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
