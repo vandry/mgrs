@@ -1,4 +1,5 @@
-<html><head><title>MGRS converter</title>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>MGRS converter</title>
 <style type="text/css">
 <!--
 body {
@@ -22,7 +23,7 @@ td.keycap {
 	border-width:1px;
 	border-color:black;
 	text-align:center;
-	font-size: 200%;
+	font-size: 300%;
 }
 td.ok {
 	background-color: #0c0;
@@ -76,20 +77,10 @@ div#line1 {
 	top: 10%;
 	height: 10%;
 }
-td#inputfield {
-	background-color: #fff;
-	text-align: center;
-	font-size: 200%;
-}
 div#line2 {
 	position: absolute;
 	top: 50%;
 	height: 20%;
-}
-td#outputfield {
-	background-color: #fff;
-	text-align: center;
-	font-size: 200%;
 }
 table.latlon {
 	font-size: 200%;
@@ -99,6 +90,9 @@ table.latlon {
 	border-style:solid;
 	border-width:4px;
 	border-color:black;
+	background-color: #fff;
+	text-align: center;
+	font-size: 300%;
 }
 -->
 </style>
@@ -139,7 +133,8 @@ function conversion_success(lat, lon) {
 
 function onload() {
 	var keycaps = document.getElementsByClassName("keycap");
-	var inputfield = document.getElementById("inputfield");
+	var input1 = document.getElementById("input1");
+	var input2 = document.getElementById("input2");
 	var outputfield = document.getElementById("outputfield");
 	var alpha = document.getElementById("alpha");
 	var numeric = document.getElementById("numeric");
@@ -149,6 +144,7 @@ function onload() {
 	var not5_list = document.getElementsByClassName("not5");
 	var not1_list = document.getElementsByClassName("not1");
 	var ok_list = document.getElementsByClassName("ok");
+	var now_editing = 0;
 	function set_insensitive(e) {
 		if (e.className.substring(0, 12) != 'insensitive ') {
 			e.className = 'insensitive ' + e.className;
@@ -160,12 +156,20 @@ function onload() {
 		}
 	}
 	function adjust_keyboard() {
-		var t = inputfield.innerHTML;
-		if ((t.length > 0) && (t.substring(0, 1) >= 'A')) {
+		var t = input1.innerHTML;
+		if (t.length == 0) {
+			northpole.style.display = 'inherit';
+			southpole.style.display = 'inherit';
+			alpha.style.display = 'none';
+			numeric.style.display = 'inherit';
+			for (var i = 0; i < not1_list.length; i++) {
+				set_sensitive(not1_list[i]);
+			}
+		} else {
 			northpole.style.display = 'none';
 			southpole.style.display = 'none';
-			// Different string format in the polar regions
-			if (t.length < 3) {
+			if (t.substring(0, 1) >= 'A') {
+				// Different string format in the polar regions
 				alpha.style.display = 'inherit';
 				numeric.style.display = 'none';
 				if (t.length == 1) {
@@ -177,63 +181,42 @@ function onload() {
 						set_sensitive(not1_list[i]);
 					}
 				}
-			} else {
+			} else if (t.length < 2) {
 				alpha.style.display = 'none';
 				numeric.style.display = 'inherit';
-				if ((t.length > 3) && ((t.length & 1) == 1)) {
-					for (var i = 0; i < ok_list.length; i++) {
-						set_sensitive(ok_list[i]);
-					}
-				} else {
-					for (var i = 0; i < ok_list.length; i++) {
-						set_insensitive(ok_list[i]);
-					}
-				}
+			} else {
+				alpha.style.display = 'inherit';
+				numeric.style.display = 'none';
 			}
-			return;
-		}
-		if ((t.length < 2) || (t.length > 4)) {
-			alpha.style.display = 'none';
-			numeric.style.display = 'inherit';
-			if (t == "&nbsp;") {
-				northpole.style.display = 'inherit';
-				southpole.style.display = 'inherit';
-				for (var i = 0; i < not1_list.length; i++) {
-					set_sensitive(not1_list[i]);
+			if (t.length == 2) {
+				for (var i = 0; i < not3_list.length; i++) {
+					set_insensitive(not3_list[i]);
 				}
 			} else {
-				northpole.style.display = 'none';
-				southpole.style.display = 'none';
+				for (var i = 0; i < not3_list.length; i++) {
+					set_sensitive(not3_list[i]);
+				}
 			}
-		} else {
-			alpha.style.display = 'inherit';
-			numeric.style.display = 'none';
-		}
-		if (t.length == 2) {
-			for (var i = 0; i < not3_list.length; i++) {
-				set_insensitive(not3_list[i]);
-			}
-		} else {
-			for (var i = 0; i < not3_list.length; i++) {
-				set_sensitive(not3_list[i]);
+			if (t.length == 4) {
+				for (var i = 0; i < not5_list.length; i++) {
+					set_insensitive(not5_list[i]);
+				}
+			} else {
+				for (var i = 0; i < not5_list.length; i++) {
+					set_sensitive(not5_list[i]);
+				}
 			}
 		}
-		if (t.length == 4) {
-			for (var i = 0; i < not5_list.length; i++) {
-				set_insensitive(not5_list[i]);
-			}
-		} else {
-			for (var i = 0; i < not5_list.length; i++) {
-				set_sensitive(not5_list[i]);
-			}
-		}
-		if ((t.length > 5) && ((t.length & 1) == 1)) {
-			for (var i = 0; i < ok_list.length; i++) {
-				set_sensitive(ok_list[i]);
-			}
-		} else {
+	}
+	function adjust_ok() {
+		var t = input2.innerHTML;
+		if ((t.length == 0) || (t.length % 2)) {
 			for (var i = 0; i < ok_list.length; i++) {
 				set_insensitive(ok_list[i]);
+			}
+		} else {
+			for (var i = 0; i < ok_list.length; i++) {
+				set_sensitive(ok_list[i]);
 			}
 		}
 	}
@@ -243,23 +226,36 @@ function onload() {
 	function convert() {
 		alpha.style.display = 'none';
 		numeric.style.display = 'none';
+		var s = input1.innerHTML + input2.innerHTML;
 		if (/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent)) {
 			var iframe = document.createElement("IFRAME");
-			iframe.setAttribute("src", "mgrs-convert:" +
-				inputfield.innerHTML);
+			iframe.setAttribute("src", "mgrs-convert:" + s);
 			document.documentElement.appendChild(iframe);
 			iframe.parentNode.removeChild(iframe);
 			iframe = null;
 		} else {
-			outputfield.innerHTML = "This demo cannot do conversion<br /> for " + inputfield.innerHTML;
+			outputfield.innerHTML = "This demo cannot do conversion<br /> for " + s;
 		}
 	}
 	function start_editing() {
+		now_editing = 1;
 		alpha.style.display = 'none';
 		numeric.style.display = 'inherit';
 		southpole.style.display = 'inherit';
 		northpole.style.display = 'inherit';
-		inputfield.innerHTML = "\u00a0";
+		input1.innerHTML = "";
+		input2.innerHTML = "";
+		for (var i = 0; i < ok_list.length; i++) {
+			set_insensitive(ok_list[i]);
+		}
+	}
+	function start_editing2() {
+		now_editing = 3;
+		alpha.style.display = 'none';
+		numeric.style.display = 'inherit';
+		southpole.style.display = 'none';
+		northpole.style.display = 'none';
+		input2.innerHTML = "";
 		for (var i = 0; i < ok_list.length; i++) {
 			set_insensitive(ok_list[i]);
 		}
@@ -270,30 +266,54 @@ function onload() {
 
 		function action() {
 			if (key == "BS") {
-				inputfield.innerHTML = inputfield.innerHTML.substring(
-					0, inputfield.innerHTML.length-1
+				if (now_editing > 1) {
+					if (input2.innerHTML.length > 0) {
+						input2.innerHTML = input2.innerHTML.substring(
+							0, input2.innerHTML.length-1
+						);
+						adjust_ok();
+						return;
+					}
+					// Pressing backspace in input field #2
+					// when the field is empty should result in:
+					// - If we progressed from field 1, backspace into field 1
+					// - If we edited field 2 directly, nothing
+					if (now_editing > 2) return;
+					now_editing = 1;
+				}
+				input1.innerHTML = input1.innerHTML.substring(
+					0, input1.innerHTML.length-1
 				);
-				if (inputfield.innerHTML == '') {
-					inputfield.innerHTML = "\u00a0";
-				}
 				adjust_keyboard();
-			} else if (key == "OK") {
-				convert();
-			} else {
-				if (inputfield.innerHTML == "&nbsp;") {
-					inputfield.innerHTML = key;
-				} else {
-					inputfield.innerHTML += key;
-				}
-				if (inputfield.innerHTML.length == 15) {
-					convert();
-				} else if (
-					(inputfield.innerHTML.substring(0, 1) >= 'A') &&
-					(inputfield.innerHTML.length == 13)
+				return;
+			}
+			if (now_editing == 1) {
+				input1.innerHTML += key;
+				var t = input1.innerHTML;
+				if (t.length >= (
+					(t.substring(0, 1) >= 'A') ?
+						// Polar
+						3 :
+						// Normal
+						5
+					)
 				) {
-					convert();
+					now_editing = 2;
+					alpha.style.display = 'none';
+					numeric.style.display = 'inherit';
 				} else {
 					adjust_keyboard();
+				}
+			} else {
+				if (key == "OK") {
+					convert();
+				} else {
+					input2.innerHTML += key;
+					if (input2.innerHTML.length == 10) {
+						convert();
+					} else {
+						adjust_ok();
+					}
 				}
 			}
 		}
@@ -351,41 +371,51 @@ function onload() {
 	for (var i = 0; i < keycaps.length; i++) {
 		add_keycap_events(keycaps[i]);
 	}
-	inputfield.addEventListener('click', function(e) {
+	input1.addEventListener('click', function(e) {
 		start_editing();
 	}, false);
-	inputfield.addEventListener('touchstart', function(e) {
+	input1.addEventListener('touchstart', function(e) {
 		start_editing();
 		e.preventDefault();
 	}, false);
-	inputfield.innerHTML = "18TXQ5763184896";
+	input2.addEventListener('click', function(e) {
+		start_editing2();
+	}, false);
+	input2.addEventListener('touchstart', function(e) {
+		start_editing2();
+		e.preventDefault();
+	}, false);
+	input1.innerHTML = "18TXQ";
+	input2.innerHTML = "5763184896";
 	convert();
 }
 
 </script>
 </head>
-<body onload="javascript:onload();" bgcolor="yellow">
+<body onload="javascript:onload();" )="" bgcolor="#C0C0C0">
 <div id="line1">
 	<table border="0">
-	<tr>
-		<td width="20%"></td>
-		<td id="inputfield" class="roundborder"></td>
-		<td width="20%"></td>
+	<tbody><tr>
+		<td width="5%"></td>
+		<td id="input1" class="roundborder">18TXQ</td>
+		<td width="5%"></td>
+		<td id="input2" class="roundborder">5763184896</td>
+		<td width="5%"></td>
 	</tr>
-	</table>
+	</tbody></table>
 </div>
 <div id="line2">
 	<table border="0">
-	<tr>
-		<td width="15%"></td>
-		<td id="outputfield" class="roundborder"></td>
-		<td width="15%"></td>
+	<tbody><tr>
+		<td width="13%"></td>
+		<td id="outputfield" class="roundborder">This demo cannot do conversion<br> for 18TXQ5763184896</td>
+		<td width="13%"></td>
 	</tr>
-	</table>
+	</tbody></table>
 </div>
-<div id="numeric">
+<div style="display: none;" id="numeric">
 	<table class="keyboard">
-	<tr>
+	<tbody><tr>
 		<td class="keycap">0</td>
 		<td class="keycap">1</td>
 		<td class="keycap">2</td>
@@ -401,27 +431,27 @@ function onload() {
 		<td class="keycap">9</td>
 		<td class="keycap ok">OK</td>
 	</tr>
-	</table>
+	</tbody></table>
 </div>
 <div id="southpole">
 	<table class="keyboard">
-	<tr>
+	<tbody><tr>
 		<td class="keycap">A</td>
 		<td class="keycap">B</td>
 	</tr>
-	</table>
+	</tbody></table>
 </div>
 <div id="northpole">
 	<table class="keyboard">
-	<tr>
+	<tbody><tr>
 		<td class="keycap">Y</td>
 		<td class="keycap">Z</td>
 	</tr>
-	</table>
+	</tbody></table>
 </div>
-<div id="alpha">
+<div style="display: none;" id="alpha">
 	<table class="keyboard">
-	<tr>
+	<tbody><tr>
 		<td class="keycap not3">A</td>
 		<td class="keycap not3">B</td>
 		<td class="keycap">C</td>
@@ -456,9 +486,10 @@ function onload() {
 		<td class="keycap not3 not5">Z</td>
 		<td class="keycap cancel">BS</td>
 	</tr>
-	</table>
+	</tbody></table>
 </div>
 <div id="versionquery"><!-- add nothing to this line -->
 </div>
-</body>
-</html>
+
+
+</body></html>
