@@ -271,7 +271,7 @@ uiposrect(float x, float y, float width, float height)
 	int nkeys = rows * columns;
 	int i;
 	
-	master = [ UIImage applicationImageNamed: imagename ];
+	master = [ UIImage imageNamed: imagename ];
 	
 	height = master.size.width;
 	width = master.size.height;
@@ -334,7 +334,7 @@ uiposrect(float x, float y, float width, float height)
 
 - (void)set_image:(NSString *)imagename
 {
-	normal_master = [ UIImage applicationImageNamed: imagename ];
+	normal_master = [ UIImage imageNamed: imagename ];
 	imageview = [ [ UIImageView alloc ] initWithImage: normal_master ];
 	[ self addSubview: imageview ];
 }
@@ -554,7 +554,7 @@ const char *alpha2_keys = "ABCDEF";
 		GZDSI[0] = 0;
 		eastnorth[0] = 0;
 		
-		bgimage = [ UIImage applicationImageNamed:@"bg_normal.png" ];
+		bgimage = [ UIImage imageNamed:@"bg_normal.png" ];
 		background_view = [ [ UIImageView alloc ] initWithImage: bgimage ];
 		[ self addSubview: background_view ];
 		
