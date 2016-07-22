@@ -39,17 +39,27 @@ uiposrect(float x, float y, float width, float height)
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 
-	[[UIApplication sharedApplication] setStatusBarHidden:YES];
+	//[[UIApplication sharedApplication] setStatusBarHidden:YES];
+    
+    UIViewController *vc = [[UIViewController alloc] init];
 	
 	window = [ [ UIWindow alloc ] initWithContentRect:
 			  [[UIScreen mainScreen] applicationFrame]
 			  ];
+    /*/http://stackoverflow.com/questions/7520971/applications-are-expected-to-have-a-root-view-controller-at-the-end-of-applicati
+    NSArray *windows = [[UIApplication sharedApplication] windows];
+    for(UIWindow *window in windows) {
+        if(window.rootViewController == nil){
+            UIViewController* vc = [[UIViewController alloc]initWithNibName:nil bundle:nil];
+            window.rootViewController = vc;
+        }
+    }*/
 	
 	
 	CGRect rect = [[UIScreen mainScreen] applicationFrame];
 	rect.origin.x = rect.origin.y = 0.0f;
 
-	if (rect.size.width >= 400.0) {
+	//if (rect.size.width >= 400.0) {
 		/* Use portrait */
 		webView = [ [ UIWebView alloc] initWithFrame: rect ];
 		webView.delegate = self;
@@ -59,11 +69,13 @@ uiposrect(float x, float y, float width, float height)
 		NSURL *fileURL = [ [ NSURL alloc ] initFileURLWithPath:path ];
 		NSURLRequest *req = [ NSURLRequest requestWithURL:fileURL ];
 		[ webView loadRequest:req ];
-		[ window setContentView: webView ];
-	} else {
+		//[ window setContentView: webView ];
+        [vc.view addSubview:webView];
+	/*} else {
 		mainView = [ [ MainView alloc ] initWithFrame: rect ];
 	
-		[ window setContentView: mainView ];
+		//[ window setContentView: mainView ];
+        [vc.view addSubview:mainView];
 
 		[ mainView setHidden: NO ];
 
@@ -72,9 +84,11 @@ uiposrect(float x, float y, float width, float height)
 		[ mainView set_eastnorth: "5763184896" ];
 
 		[ mainView convert ];
-	}
+	}*/
 	[ window orderFront: self ];
 	[ window makeKey: self ];
+    
+    window.rootViewController = vc;
 
 }
 
@@ -301,7 +315,7 @@ uiposrect(float x, float y, float width, float height)
 		float y = col * bwidth;
 		
 		CGImageRef newcgim = CGImageCreateWithImageInRect(
-														  [ master imageRef ],
+														  [ master CGImage ],
 														  CGRectMake(x, y, bheight, bwidth)
 														  );
 		images[keyid] = [ UIImage imageWithCGImage:newcgim ];
@@ -313,6 +327,8 @@ uiposrect(float x, float y, float width, float height)
 							initWithFrame: CGRectMake(x, y, bheight, bwidth)
 							] retain ];
 		[ uiviews[keyid] addSubview: views[keyid] ];
+        CGImageRelease(newcgim);
+        newcgim = NULL;
 	}
 	
 	return uiviews[keyid];
