@@ -137,14 +137,16 @@ function conversion_success(lat, lon) {
 	lat = Math.floor(frlat / 6000);
 	lon = Math.floor(frlon / 6000);
 	var s = "<table class=\"latlon\">" +
-		"<tr><td align=\"right\">" + lat.toFixed(0) + "&#176;</td>" +
-		"<td align=\"right\">" +
-		latmin.toFixed(2) +
-		"'</td><td>" + lat_h + "</td></tr>" +
-		"<tr><td align=\"right\">" + lon.toFixed(0) + "&#176;</td>" +
-		"<td align=\"right\">" +
-		lonmin.toFixed(2) +
-		"'</td><td>" + lon_h + "</td></tr></table>";
+		"<tr><td align=\"right\">" +
+		lat.toFixed(0) + "&#176;</td>" +
+		"<td colspan=\"2\" align=\"left\">" +
+		latmin.toFixed(2) + "\' " + lat_h +
+		"</td></tr>" +
+		"<tr><td align=\"right\">" +
+		lon.toFixed(0) + "&#176;</td>" +
+		"<td colspan=\"2\" align=\"left\">" +
+		lonmin.toFixed(2) + "\' " + lon_h +
+		"</td></tr></table>";
 	document.getElementById("outputfield").innerHTML = s;
 }
 

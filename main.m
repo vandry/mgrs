@@ -703,10 +703,10 @@ const char *alpha2_keys = "ABCDEF";
 		  "<table cellspacing=\"5\" border=\"0\">"
 		  "<tr><td align=\"right\">%d&#176;</td>"
 		  "<td align=\"right\">%d\'</td>"
-		  "<td align=\"right\">%g\'\'</td><td>%c</td></tr>"
+		  "<td align=\"right\">%g\'\' %c</td></tr>"
 		  "<tr><td align=\"right\">%d&#176;</td>"
 		  "<td align=\"right\">%d\'</td>"
-		  "<td align=\"right\">%g\'\'</td><td>%c</td></tr></table>"
+		  "<td align=\"right\">%g\'\' %c</td></tr></table>"
 		  "</font>",
 		  
 		  abs(frlat / 3600000),
@@ -723,9 +723,9 @@ const char *alpha2_keys = "ABCDEF";
 		  "<font face=\"Courier\"><b>"
 		  "<table cellspacing=\"5\" border=\"0\">"
 		  "<tr><td align=\"right\">%d&#176;</td>"
-		  "<td align=\"right\">%.2f\'</td><td>%c</td></tr>"
+		  "<td colspan=\"2\" align=\"left\">%.2f\' %c</td></tr>"
 		  "<tr><td align=\"right\">%d&#176;</td>"
-		  "<td align=\"right\">%.2f\'</td><td>%c</td></tr></table>"
+		  "<td colspan=\"2\" align=\"left\">%.2f\' %c</td></tr></table>"
 		  "</b></font>",
 		  
 		  abs(frlat / 6000),
