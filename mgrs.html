@@ -1,4 +1,12 @@
 <html><head>
+
+<!-- Copyright (C) 2009-2016 Aero Teknic Inc.
+
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of version 2 of the GNU General Public License as
+     published by the Free Software Foundation.
+-->
+
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>MGRS converter</title>
 <meta name="format-detection" content="telephone=no">
 <style type="text/css">
@@ -115,6 +123,13 @@ and (max-device-width : 736px)
 -->
 </style>
 <script type="text/javascript">
+
+function showversion(version) {
+	alert(
+		"Version: " + version +
+		"\nCopyright Aero Teknic\nLicense: GPL version 2"
+	);
+}
 
 function conversion_error(message) {
 	document.getElementById("outputfield").innerHTML = message;
