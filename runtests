@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+var mgrs = require('./www/mgrs.js');
+
+var testcases = [
+	{ lat: 45.0, lon: -73.9, mgrs: "18TWQ86698353" },
+	{ lat: 21.309444, lon: -157.916861, mgrs: "04QFJ12345678" },
+	{ lat: 0.0, lon: 0.0, mgrs: "31NAA6602100000" },
+	{ lat: 86.5, lon: 124.66, mgrs: "ZFK1972121055" },
+	{ lat: -90.0, lon: 0.0, mgrs: "BAN0000000000" },
+	{ lat: -20.2345, lon: 12.5678, mgrs: "33KTT4589960702" },
+];
+
+function closeenough(a, b) {
+	return Math.abs(a-b) < 1e-4;
+}
+
+var success = true;
+
+for (var i = 0; i < testcases.length; i++) {
+	var t = testcases[i];
+	try {
+		var latlon = mgrs.Convert_MGRS_To_Geodetic(t.mgrs);
+		var lat = latlon[0] * 180.0 / Math.PI;
+		var lon = latlon[1] * 180.0 / Math.PI;
+		if (closeenough(lat, t.lat) && closeenough(lon, t.lon)) {
+			console.log("PASS " + t.mgrs);
+		} else {
+			console.log("FAIL " + t.mgrs + ": expected (" +
+				t.lat + ", " + t.lon + "), got (" +
+				lat + ", " + lon + ")");
+			success = false;
+		}
+	} catch (e) {
+		console.log("FAIL " + t.mgrs + ": " + e);
+		console.log(e.stack);
+		success = false;
+	}
+}
+
+process.exit(success ? 0 : 1);

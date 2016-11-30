@@ -122,6 +122,7 @@ and (max-device-width : 736px)
 
 -->
 </style>
+<script type="text/javascript" src="mgrs.js"></script>
 <script type="text/javascript">
 
 function showversion(version) {
@@ -129,41 +130,6 @@ function showversion(version) {
 		"Version: " + version +
 		"\nCopyright Aero Teknic\nLicense: GPL version 2"
 	);
-}
-
-function conversion_error(message) {
-	document.getElementById("outputfield").innerHTML = message;
-}
-
-function conversion_success(lat, lon) {
-	frlat = Math.round(parseFloat(lat) * 6000);
-	frlon = Math.round(parseFloat(lon) * 6000);
-	var lat_h = 'N';
-	if (frlat < 0.0) {
-		lat_h = 'S';
-		frlat = -frlat;
-	}
-	var lon_h = 'E';
-	if (frlon < 0.0) {
-		lon_h = 'W';
-		frlon = -frlon;
-	}
-	var latmin = (frlat % 6000) / 100;
-	var lonmin = (frlon % 6000) / 100;
-	lat = Math.floor(frlat / 6000);
-	lon = Math.floor(frlon / 6000);
-	var s = "<table class=\"latlon\">" +
-		"<tr><td align=\"right\">" +
-		lat.toFixed(0) + "&#176;</td>" +
-		"<td colspan=\"2\" align=\"left\">" +
-		latmin.toFixed(2) + "\' " + lat_h +
-		"</td></tr>" +
-		"<tr><td align=\"right\">" +
-		lon.toFixed(0) + "&#176;</td>" +
-		"<td colspan=\"2\" align=\"left\">" +
-		lonmin.toFixed(2) + "\' " + lon_h +
-		"</td></tr></table>";
-	document.getElementById("outputfield").innerHTML = s;
 }
 
 function onload() {
@@ -258,18 +224,69 @@ function onload() {
 	function is_sensitive(e) {
 		return (e.className.substring(0, 12) != 'insensitive ');
 	}
+	function conversion_success(lat, lon) {
+		frlat = Math.round(parseFloat(lat) * 6000);
+		frlon = Math.round(parseFloat(lon) * 6000);
+		var lat_h = 'N';
+		if (frlat < 0.0) {
+			lat_h = 'S';
+			frlat = -frlat;
+		}
+		var lon_h = 'E';
+		if (frlon < 0.0) {
+			lon_h = 'W';
+			frlon = -frlon;
+		}
+		var latmin = (frlat % 6000) / 100;
+		var lonmin = (frlon % 6000) / 100;
+		lat = Math.floor(frlat / 6000);
+		lon = Math.floor(frlon / 6000);
+		var s = "<table class=\"latlon\">" +
+			"<tr><td align=\"right\">" +
+			lat.toFixed(0) + "&#176;</td>" +
+			"<td colspan=\"2\" align=\"left\">" +
+			latmin.toFixed(2) + "\' " + lat_h +
+			"</td></tr>" +
+			"<tr><td align=\"right\">" +
+			lon.toFixed(0) + "&#176;</td>" +
+			"<td colspan=\"2\" align=\"left\">" +
+			lonmin.toFixed(2) + "\' " + lon_h +
+			"</td></tr></table>";
+		outputfield.innerHTML = s;
+	}
 	function convert() {
 		alpha.style.display = 'none';
 		numeric.style.display = 'none';
 		var s = input1.innerHTML + input2.innerHTML;
-		if (/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent)) {
-			var iframe = document.createElement("IFRAME");
-			iframe.setAttribute("src", "mgrs-convert:" + s);
-			document.documentElement.appendChild(iframe);
-			iframe.parentNode.removeChild(iframe);
-			iframe = null;
-		} else {
-			outputfield.innerHTML = "This demo cannot do conversion<br /> for " + s;
+
+		if (
+			(s.length < 7) ||
+			(!((s[0] >= '0') && (s[0] <= '9'))) ||
+			(!((s[1] >= '0') && (s[1] <= '9'))) ||
+			(!((s[2] >= 'C') && (s[2] <= 'X'))) ||
+			(!((s[3] >= 'A') && (s[3] <= 'Z'))) ||
+			(!((s[4] >= 'A') && (s[4] <= 'Z'))) ||
+			(s[2] == 'I') || (s[2] == 'O') ||
+			(s[3] == 'I') || (s[3] == 'O') ||
+			(s[4] == 'I') || (s[4] == 'O') ||
+			((s.length & 1) == 0) ||
+			(s.length > 15)
+		) {
+			outputfield.textContent = "Syntax error in MGRS";
+			return;
+		}
+
+		var latlon = null;
+		try {
+			latlon = Convert_MGRS_To_Geodetic(s);
+		} catch (e) {
+			outputfield.textContent = e;
+			latlon = null;
+		}
+		if (latlon !== null) {
+			var lat = latlon[0] / Math.PI * 180.0;
+			var lon = latlon[1] / Math.PI * 180.0;
+			conversion_success(lat, lon);
 		}
 	}
 	function start_editing() {
@@ -443,7 +460,7 @@ function onload() {
 	<table border="0">
 	<tbody><tr>
 		<td width="13%"></td>
-		<td id="outputfield" class="roundborder">This demo cannot do conversion<br> for 18TXQ5763184896</td>
+		<td id="outputfield" class="roundborder"></td>
 		<td width="13%"></td>
 	</tr>
 	</tbody></table>
