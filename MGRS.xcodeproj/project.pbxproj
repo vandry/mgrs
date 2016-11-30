@@ -243,7 +243,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nversion=`git describe --dirty`\nsed -e '/<div id=\"versionquery\">/s/$/<a href=\"javascript:alert('\\'\"Version $version\"\\'');\">?<\\/a>/' <\"${SRCROOT}/mgrs.html\" >\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/mgrs.embedded.html\"";
+			shellScript = "set -e\nversion=`git describe --dirty`\nsed -e '/<div id=\"versionquery\">/s/$/<a href=\"javascript:showversion('\\'\"$version\"\\'');\">?<\\/a>/' <\"${SRCROOT}/mgrs.html\" >\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/mgrs.embedded.html\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
