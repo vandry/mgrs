@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#import "MGRSAppDelegate.h"
 
 /* Copyright (C) 2009-2016 Aero Teknic Inc.
  
@@ -8,11 +7,10 @@
  published by the Free Software Foundation.
  */
 
+@interface MGRSAppDelegate : UIResponder <UIApplicationDelegate>
 
-int main(int argc, char * argv[]) {
-    @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([MGRSAppDelegate class]));
-    }
-}
+@property (strong, nonatomic) UIWindow *window;
 
+
+@end
 
