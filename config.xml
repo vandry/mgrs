@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.discoveryair.MGRS" version="0.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>MGRS</name>
+    <description>
+        MGRS to lat&lon conversion application
+    </description>
+    <author email="vandry@TZoNE.ORG">
+        Kim Vandry
+    </author>
+    <content src="mgrs.html" />
+    <icon src="mgrs57.png" />
+</widget>
